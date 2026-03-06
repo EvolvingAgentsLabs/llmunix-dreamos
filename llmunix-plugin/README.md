@@ -62,4 +62,4 @@ User Goal → SystemAgent queries strategies → Decomposes hierarchically
 
 ## Author
 
-[Evolving Agents Labs](https://github.com/evolving-agents-labs)
+[Evolving Agents Labs](https://github.com/EvolvingAgentsLabs)

@@ -58,7 +58,7 @@ This problem exists because **Claude Code and Claude Cowork are stateless by des
 
 ## The Solution: DreamOS
 
-DreamOS is a **Claude Code / Claude Cowork plugin** that implements a biologically-inspired cognitive architecture. It is based on three innovations, originally proven in [RoClaw](https://github.com/evolving-agents-labs/RoClaw) — a physical robot that learns to navigate rooms by consolidating motor traces into reusable strategies during "sleep" phases.
+DreamOS is a **Claude Code / Claude Cowork plugin** that implements a biologically-inspired cognitive architecture. It is based on three innovations, originally proven in [RoClaw](https://github.com/EvolvingAgentsLabs/RoClaw) — a physical robot that learns to navigate rooms by consolidating motor traces into reusable strategies during "sleep" phases.
 
 ### 1. Hierarchical Task Decomposition (L1-L4)
 
@@ -212,7 +212,7 @@ Execution (awake)          Dream (consolidation)         Next Execution (smarter
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/evolving-agents-labs/llmunix-dreamos.git
+git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
 
 # 2. Start Claude Code with the plugin
 cd your-project
@@ -241,7 +241,7 @@ If you want DreamOS as the foundation for a new project:
 
 ```bash
 # 1. Clone it as your project root
-git clone https://github.com/evolving-agents-labs/llmunix-dreamos.git my-project
+git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git my-project
 cd my-project
 
 # 2. Start Claude Code — CLAUDE.md loads automatically
@@ -270,7 +270,7 @@ claude
 
 ```bash
 # Clone the repository
-git clone https://github.com/evolving-agents-labs/llmunix-dreamos.git
+git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
 ```
 
 #### Step 2: Open in Cowork
@@ -784,9 +784,9 @@ deprecated: false                   # true = no longer recommended
 
 DreamOS stands on the shoulders of two projects:
 
-- **[RoClaw](https://github.com/evolving-agents-labs/RoClaw)**: The hierarchical memory architecture, Dream Engine 3-phase algorithm, strategy scoring with composite weights, negative constraints with severity levels, trace hierarchy (L1-L4), and the core+adapter pattern. Originally built for a physical robot that learns to navigate rooms.
+- **[RoClaw](https://github.com/EvolvingAgentsLabs/RoClaw)**: The hierarchical memory architecture, Dream Engine 3-phase algorithm, strategy scoring with composite weights, negative constraints with severity levels, trace hierarchy (L1-L4), and the core+adapter pattern. Originally built for a physical robot that learns to navigate rooms.
 
-- **[LLMunix Marketplace](https://github.com/evolving-agents-labs/llmunix-marketplace)**: The pure-markdown plugin architecture, agent definitions with YAML frontmatter, the `/llmunix` kernel command, SmartMemory system, and the philosophy that everything should be inspectable markdown — no binary dependencies, no databases.
+- **[LLMunix Marketplace](https://github.com/EvolvingAgentsLabs/llmunix-marketplace)**: The pure-markdown plugin architecture, agent definitions with YAML frontmatter, the `/llmunix` kernel command, SmartMemory system, and the philosophy that everything should be inspectable markdown — no binary dependencies, no databases.
 
 ---
 
@@ -794,4 +794,4 @@ DreamOS stands on the shoulders of two projects:
 
 Apache License 2.0 — See [LICENSE](LICENSE)
 
-Built by [Evolving Agents Labs](https://github.com/evolving-agents-labs)
+Built by [Evolving Agents Labs](https://github.com/EvolvingAgentsLabs)
