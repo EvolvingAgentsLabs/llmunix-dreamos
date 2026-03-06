@@ -138,13 +138,23 @@ Claude Cowork is Anthropic's desktop application that brings Claude Code's agent
 
 Cowork's killer feature for DreamOS is **background execution**. While you code:
 
-```
-You (working) ──────────────────────────────────────────────>
-                    │                          │
-                    ▼                          ▼
-         DreamEngine (background)    DreamEngine (background)
-         Consolidates morning        Consolidates afternoon
-         traces into strategies      traces into strategies
+```mermaid
+sequenceDiagram
+    participant You as You (working)
+    participant DE1 as DreamEngine (background)
+
+    activate You
+    Note over You: Morning coding session
+    You->>DE1: Traces accumulated
+    activate DE1
+    Note over DE1: Consolidates morning<br/>traces into strategies
+    deactivate DE1
+    Note over You: Afternoon coding session
+    You->>DE1: Traces accumulated
+    activate DE1
+    Note over DE1: Consolidates afternoon<br/>traces into strategies
+    deactivate DE1
+    deactivate You
 ```
 
 The DreamEngineAgent runs as a background Cowork task, continuously processing your traces and updating strategies — without interrupting your workflow.
@@ -177,23 +187,33 @@ DreamOS adapts the `llmunix-core` Dream Engine from RoClaw (a physical robot) to
 
 ### The Dream Cycle
 
-```
-Execution (awake)          Dream (consolidation)         Next Execution (smarter)
-┌──────────────┐          ┌──────────────────────┐       ┌──────────────────┐
-│ User tasks   │  traces  │ Phase 1: SWS         │       │ Load strategies  │
-│ Tool calls   │ ──────>  │  - Analyze failures  │       │ Load constraints │
-│ Outcomes     │          │  - Extract anti-pats  │       │ Apply to planning│
-│ Successes    │          │                      │       │ Better execution │
-│ Failures     │          │ Phase 2: REM         │       │ Fewer mistakes   │
-└──────────────┘          │  - Abstract patterns │       └──────────────────┘
-                          │  - Create strategies │              ↑
-                          │  - Merge evidence    │              │
-                          │                      │        strategies
-                          │ Phase 3: Consolidate │        constraints
-                          │  - Write to disk     │ ───────────┘
-                          │  - Update journal    │
-                          │  - Prune old traces  │
-                          └──────────────────────┘
+```mermaid
+flowchart LR
+    subgraph Execution ["Execution (awake)"]
+        E1[User tasks]
+        E2[Tool calls]
+        E3[Outcomes]
+        E4[Successes]
+        E5[Failures]
+    end
+
+    subgraph Dream ["Dream (consolidation)"]
+        D1["<b>Phase 1: SWS</b><br/>- Analyze failures<br/>- Extract anti-patterns"]
+        D2["<b>Phase 2: REM</b><br/>- Abstract patterns<br/>- Create strategies<br/>- Merge evidence"]
+        D3["<b>Phase 3: Consolidate</b><br/>- Write to disk<br/>- Update journal<br/>- Prune old traces"]
+        D1 --> D2 --> D3
+    end
+
+    subgraph Next ["Next Execution (smarter)"]
+        N1[Load strategies]
+        N2[Load constraints]
+        N3[Apply to planning]
+        N4[Better execution]
+        N5[Fewer mistakes]
+    end
+
+    Execution -- "traces" --> Dream
+    Dream -- "strategies &<br/>constraints" --> Next
 ```
 
 ---
