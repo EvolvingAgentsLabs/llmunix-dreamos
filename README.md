@@ -208,25 +208,33 @@ Execution (awake)          Dream (consolidation)         Next Execution (smarter
 
 ### Option 1: Claude Code (Terminal)
 
-#### Method A: Install as a Plugin (Recommended)
+#### Method A: Ask Claude Code to Install It (Recommended)
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
+The simplest way to install DreamOS is to ask Claude Code directly inside any conversation:
 
-# 2. Start Claude Code with the plugin
-cd your-project
-claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
+```
+Please install the llmunix-dreamos plugin from EvolvingAgentsLabs globally
 ```
 
-To install permanently (available in all sessions):
+Claude Code will run the necessary commands for you:
 
 ```bash
-# Add the marketplace
-claude plugin marketplace add evolving-agents-labs/llmunix-dreamos
+claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
+claude plugin install llmunix-plugin@llmunix-dreamos --scope user
+```
 
-# Install the plugin
-claude plugin install llmunix-plugin@llmunix-dreamos
+That's it — the plugin is now available in all your Claude Code sessions.
+
+#### Method B: Install via CLI Commands
+
+If you prefer to run the commands yourself:
+
+```bash
+# 1. Add the marketplace
+claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
+
+# 2. Install the plugin globally (available in all sessions)
+claude plugin install llmunix-plugin@llmunix-dreamos --scope user
 ```
 
 Or install at project scope (shared with your team via git):
@@ -235,7 +243,20 @@ Or install at project scope (shared with your team via git):
 claude plugin install llmunix-plugin@llmunix-dreamos --scope project
 ```
 
-#### Method B: Manual Setup (Standalone Project)
+#### Method C: Run Locally Without Installing
+
+For development or one-off testing:
+
+```bash
+# Clone the repository
+git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
+
+# Start Claude Code with the plugin loaded directly
+cd your-project
+claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
+```
+
+#### Method D: Manual Setup (Standalone Project)
 
 If you want DreamOS as the foundation for a new project:
 
@@ -250,7 +271,7 @@ claude
 
 The `CLAUDE.md` at the root instructs Claude to use the DreamOS cognitive architecture. The agents in `.claude/agents/` are auto-discovered by Claude Code.
 
-#### Method C: Add to an Existing Project
+#### Method E: Add to an Existing Project
 
 ```bash
 # 1. Copy the system memory into your project

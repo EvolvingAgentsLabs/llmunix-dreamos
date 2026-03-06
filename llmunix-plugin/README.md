@@ -6,13 +6,24 @@ The kernel plugin for the LLMunix DreamOS cognitive operating system. Provides b
 
 ### Claude Code (Terminal)
 
-```bash
-# Run with the plugin
-claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
+The easiest way to install is to ask Claude Code directly in any conversation:
 
-# Or install permanently
-claude plugin marketplace add evolving-agents-labs/llmunix-dreamos
-claude plugin install llmunix-plugin@llmunix-dreamos
+```
+Please install the llmunix-dreamos plugin from EvolvingAgentsLabs globally
+```
+
+Or run the CLI commands yourself:
+
+```bash
+# Add the marketplace and install globally
+claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
+claude plugin install llmunix-plugin@llmunix-dreamos --scope user
+```
+
+For development or one-off testing:
+
+```bash
+claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
 ```
 
 ### Claude Cowork (Desktop)
