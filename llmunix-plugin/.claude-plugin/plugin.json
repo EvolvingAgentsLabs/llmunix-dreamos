@@ -1,0 +1,8 @@
+{
+  "name": "llmunix-plugin",
+  "description": "The DreamOS kernel — a bio-inspired cognitive operating system for Claude Code and Claude Cowork. Implements 3-phase memory consolidation (SWS/REM/Consolidation), hierarchical trace logging (L1-L4), and strategy-driven execution.",
+  "version": "2.0.0",
+  "author": {
+    "name": "Evolving Agents Labs"
+  }
+}

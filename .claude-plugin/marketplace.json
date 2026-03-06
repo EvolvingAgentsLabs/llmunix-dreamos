@@ -1,0 +1,13 @@
+{
+  "name": "llmunix-dreamos",
+  "owner": {
+    "name": "Evolving Agents Labs"
+  },
+  "plugins": [
+    {
+      "name": "llmunix-plugin",
+      "source": "./llmunix-plugin",
+      "description": "The LLMunix DreamOS Kernel — Bio-Inspired Cognitive OS for Software Development"
+    }
+  ]
+}
