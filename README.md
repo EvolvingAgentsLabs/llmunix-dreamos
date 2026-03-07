@@ -18,6 +18,7 @@ DreamOS uses **unihemispheric dreaming** — inspired by dolphins, which sleep w
 - [Architecture Overview](#architecture-overview)
 - [Installation](#installation)
 - [Unihemispheric Dreaming](#unihemispheric-dreaming)
+  - [Loop Mode — Recurring Dreams with `/loop`](#loop-mode--recurring-dreams-with-loop)
 - [Tutorial: Using DreamOS](#tutorial-using-dreamos)
 - [Directory Structure](#directory-structure)
 - [How the Dream Engine Works](#how-the-dream-engine-works)
@@ -183,10 +184,11 @@ flowchart TD
     style store fill:#fce4ec,stroke:#ef5350
 ```
 
-Dream sessions can be triggered three ways:
+Dream sessions can be triggered four ways:
 - **On-demand**: `/llmunix dream authentication` — dream about specific traces right now
-- **After task completion**: The `/llmunix` command auto-triggers a goal-focused dream
-- **Scheduled**: A recurring task runs a full-sweep or goal-focused dream on a timer
+- **After task completion**: The `/llmunix` command auto-triggers per-agent dream cycles (minimum 3)
+- **Loop mode**: `/llmunix loop` generates a `/loop` command for session-scoped recurring dreams
+- **Scheduled**: A recurring Desktop task runs a full-sweep or goal-focused dream on a timer
 
 ---
 
@@ -257,7 +259,8 @@ There is no circadian constraint. Dreams don't wait for "night". They can happen
 | Trigger | How It Works | Best For |
 |---------|-------------|----------|
 | **On-demand** | `/llmunix dream [keywords]` | Consolidate after finishing a specific feature or fixing a class of bugs |
-| **After task completion** | Automatic — `/llmunix` triggers a goal-focused dream when done | Every task contributes to learning immediately |
+| **After task completion** | Automatic — `/llmunix` triggers per-agent dream cycles (min 3) | Every task contributes to learning immediately |
+| **Loop mode** | `/llmunix loop` generates a `/loop` command for recurring dreams | Active coding sprints — lightweight, session-scoped |
 | **Scheduled** | Recurring Desktop task (hourly, daily, etc.) | Full-sweep catch-all to consolidate anything the focused dreams missed |
 | **Parallel multi-goal** | `/llmunix dream --parallel auth \| API \| database` | Dream about multiple domains simultaneously after a big sprint |
 
@@ -319,6 +322,55 @@ flowchart LR
 ```
 
 Each dream uses its own unique dream ID for concurrency safety.
+
+### Loop Mode — Recurring Dreams with `/loop`
+
+Claude Code has a built-in `/loop` command that runs any command on a recurring interval within your current session. DreamOS integrates with this via `/llmunix loop`, which generates the right `/loop` command for you to copy and run.
+
+This is the **simplest way to set up recurring dreams** — no scheduled tasks to configure, no Desktop UI needed. Just paste and go.
+
+#### Quick Start
+
+```
+/llmunix loop                          # Outputs: /loop 1h /llmunix dream
+/llmunix loop authentication           # Outputs: /loop 1h /llmunix dream authentication
+/llmunix loop 30m API endpoints        # Outputs: /loop 30m /llmunix dream API endpoints
+/llmunix loop stop                     # Outputs instructions for stopping
+```
+
+The plugin outputs the command — you paste it into your session to start the loop. This is because `/loop` is a built-in CLI command that plugins cannot invoke directly.
+
+#### How It Works
+
+```mermaid
+sequenceDiagram
+    participant U as You
+    participant P as /llmunix loop
+    participant L as /loop (built-in)
+    participant D as DreamEngineAgent
+
+    U->>P: /llmunix loop 30m auth
+    P-->>U: Copy this: /loop 30m /llmunix dream auth
+    U->>L: /loop 30m /llmunix dream auth
+    loop Every 30 minutes
+        L->>D: /llmunix dream auth
+        D->>D: SWS → REM → Consolidate
+        D-->>L: Dream complete
+    end
+    U->>L: Ctrl+C to stop
+```
+
+#### Loop Mode vs Scheduled Tasks
+
+| Feature | Loop Mode (`/llmunix loop`) | Scheduled Tasks (Desktop UI) |
+|---------|---------------------------|------------------------------|
+| **Setup** | One command, paste and go | Configure in Desktop Schedule UI |
+| **Scope** | Current session only (max 3 days) | Persistent across sessions |
+| **Survives restart** | No — stops when session ends | Yes — runs on Desktop schedule |
+| **Best for** | Active coding sprints, quick experiments | Long-running projects, team workflows |
+| **Stop** | Ctrl+C or close session | Toggle in Schedule UI |
+
+**Recommendation**: Use **Loop Mode** during active work sessions for lightweight recurring dreams. Use **Scheduled Tasks** for persistent, project-wide consolidation that survives restarts.
 
 ### Scheduled Dreams
 
