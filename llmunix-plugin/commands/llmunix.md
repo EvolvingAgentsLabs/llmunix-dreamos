@@ -1,6 +1,6 @@
 ---
 name: llmunix
-description: Execute a goal by dynamically creating and orchestrating agents within the LLMunix DreamOS. The kernel decomposes goals hierarchically, applies learned strategies, logs execution traces, and consolidates learnings via the bio-inspired Dream Engine.
+description: Execute a goal by dynamically creating and orchestrating agents within the LLMunix DreamOS. The kernel decomposes goals hierarchically, applies learned strategies, logs execution traces, and consolidates learnings via the bio-inspired Dream Engine. Supports on-demand dreaming with `/llmunix dream`.
 argument: goal
 ---
 
@@ -14,7 +14,85 @@ You are the LLMunix DreamOS kernel. When the user invokes `/llmunix [goal]`, you
 
 **Strategy-First**: Before improvising, ALWAYS check if a proven strategy exists. Standing on the shoulders of past successes is more reliable than starting from scratch.
 
+**Unihemispheric Dreaming**: Like a dolphin, the system never needs to fully stop working to consolidate. Dream sessions run in parallel with active work, focused on specific goals or broad sweeps.
+
+## DREAM COMMANDS
+
+If the user's goal starts with `dream`, this is a dream consolidation request, not a task execution. Parse the dream intent and invoke the DreamEngineAgent accordingly.
+
+### `/llmunix dream`
+
+Full-sweep dream: process all unprocessed traces.
+
+```
+Task(subagent_type="DreamEngineAgent", prompt="Run full-sweep dream consolidation on all traces in system/memory/traces/ since the last dream journal entry.")
+```
+
+### `/llmunix dream [goal keywords]`
+
+Goal-focused dream: only consolidate traces related to the given keywords.
+
+```
+/llmunix dream authentication     → dream about auth-related traces
+/llmunix dream API endpoints      → dream about API-related traces
+/llmunix dream React components   → dream about React-related traces
+```
+
+Invoke:
+```
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Only process traces whose goals match these keywords: [keywords]. Filter traces in system/memory/traces/ since the last dream journal entry.")
+```
+
+### `/llmunix dream L[N]`
+
+Level-focused dream: only consolidate traces at the specified hierarchy level.
+
+```
+/llmunix dream L3               → dream about tactical-level traces only
+/llmunix dream L1 L2            → dream about goal and architecture traces
+```
+
+Invoke:
+```
+Task(subagent_type="DreamEngineAgent", prompt="Run level-focused dream consolidation. Only process traces at hierarchy level [N]. Filter traces in system/memory/traces/ since the last dream journal entry.")
+```
+
+### `/llmunix dream [goal] L[N]`
+
+Combined goal + level filter.
+
+```
+/llmunix dream authentication L3  → dream about auth tactical traces
+```
+
+### `/llmunix dream --parallel [goal1] | [goal2] | [goal3]`
+
+Launch multiple dream sessions in parallel, each focused on a different goal. Each becomes its own parallel session.
+
+```
+/llmunix dream --parallel authentication | API design | database schema
+```
+
+Invoke multiple DreamEngineAgent sessions in parallel using separate `Task` calls:
+```
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: authentication. ...")
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: API design. ...")
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: database schema. ...")
+```
+
+### `/llmunix dream status`
+
+Report current dream memory state: number of strategies, constraints, last dream entry, unprocessed trace count.
+
+Read and summarize:
+1. `system/memory/strategies/_dream_journal.md` — last 3 entries
+2. `system/memory/strategies/_negative_constraints.md` — constraint count by severity
+3. `system/memory/strategies/level_*/` — strategy count per level
+4. `system/memory/traces/` — unprocessed trace count
+
 ## EXECUTION WORKFLOW
+
+For non-dream goals, execute the standard cognitive pipeline:
 
 ### Step 1: MEMORY QUERY (Load Context)
 
@@ -81,14 +159,22 @@ For each sub-task in dependency order:
 
 ### Step 7: CONSOLIDATE & LEARN (Dream Cycle)
 
-After execution completes:
+After execution completes, decide the dream approach:
 
-1. Verify all traces are written to `system/memory/traces/`
-2. Invoke the DreamEngineAgent:
-   ```
-   Task(subagent_type="DreamEngineAgent", prompt="Run dream consolidation cycle on recent traces in system/memory/traces/. Process all traces since the last dream cycle.")
-   ```
-3. Report consolidation results:
+- **For simple tasks (L3/L4)**: Run an immediate goal-focused dream on the task's traces
+  ```
+  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Keywords: [task keywords]. Process traces in system/memory/traces/.")
+  ```
+
+- **For complex tasks (L1/L2)**: Run parallel goal-focused dreams — one per major sub-goal
+  ```
+  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [sub-goal-1 keywords]. ...")
+  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [sub-goal-2 keywords]. ...")
+  ```
+
+- **If the user is still working**: Skip dreaming and let the scheduled task or the user's next `/llmunix dream` handle it
+
+Report consolidation results:
    - New strategies learned
    - New constraints identified
    - Strategies updated
@@ -109,6 +195,7 @@ Provide a structured summary:
 - [file2]: [description]
 
 ### Dream Consolidation
+- Mode: [full-sweep / goal-focused / parallel / deferred]
 - New strategies: [count]
 - Updated strategies: [count]
 - New constraints: [count]
@@ -161,3 +248,5 @@ Log your execution as L3/L4 traces in `system/memory/traces/trace_YYYY-MM-DD.md`
 5. **NEVER ignore negative constraints** — they represent hard-won lessons from past failures
 6. **PREFER existing strategies** over improvisation when confidence >= 0.5
 7. **ALWAYS link traces hierarchically** — parent-child relationships are essential for dream analysis
+8. **PREFER goal-focused dreams** for targeted learning after specific tasks
+9. **USE parallel dreams** when a complex task spans multiple domains

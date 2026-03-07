@@ -6,7 +6,7 @@
 
 DreamOS transforms Claude from a **stateless assistant that forgets everything between sessions** into a **learning system** that accumulates strategies, avoids past mistakes, and improves with every interaction. It brings the algorithmic rigor of hierarchical memory consolidation — proven in physical robotics — to the Claude Code Desktop plugin ecosystem.
 
-With **Claude Code Desktop's scheduled tasks**, DreamOS can run its Dream Engine automatically on a recurring schedule — consolidating your day's work into reusable strategies while you sleep.
+DreamOS uses **unihemispheric dreaming** — inspired by dolphins, which sleep with one brain hemisphere while the other stays alert. Instead of waiting for a nightly consolidation cycle, DreamOS can dream *while you work*: parallel dream sessions consolidate traces in the background, focused on specific goals or broad sweeps, on-demand or on a schedule.
 
 ---
 
@@ -17,7 +17,7 @@ With **Claude Code Desktop's scheduled tasks**, DreamOS can run its Dream Engine
 - [What DreamOS Adds to Claude Code Desktop](#what-dreamos-adds-to-claude-code-desktop)
 - [Architecture Overview](#architecture-overview)
 - [Installation](#installation)
-- [Scheduled Dream Consolidation](#scheduled-dream-consolidation)
+- [Unihemispheric Dreaming](#unihemispheric-dreaming)
 - [Tutorial: Using DreamOS](#tutorial-using-dreamos)
 - [Directory Structure](#directory-structure)
 - [How the Dream Engine Works](#how-the-dream-engine-works)
@@ -76,15 +76,19 @@ Traces at each level link to their parent, forming a tree that the Dream Engine 
 
 Every significant action is logged as a structured trace with: hierarchy level, parent linkage, goal, applied strategy, outcome (SUCCESS/FAILURE/PARTIAL), confidence score, and action details. These traces are the raw material for learning.
 
-### 3. Dream Engine (3-Phase Memory Consolidation)
+### 3. Unihemispheric Dream Engine (3-Phase Memory Consolidation)
 
-After task completion — or on a **recurring schedule** — the Dream Engine runs a bio-inspired consolidation cycle:
+Dolphins never fully sleep — one brain hemisphere consolidates memories while the other remains active. DreamOS works the same way. Dream sessions run **in parallel with active work**, triggered on-demand, by goal, or on a schedule. Each dream is focused: it can process all traces, or only traces matching specific goals or hierarchy levels.
+
+Each dream session executes the same 3-phase cycle:
 
 | Phase | Biological Analog | What It Does |
 |-------|-------------------|-------------|
 | **Phase 1: SWS** | Slow Wave Sleep | Replays failures. Extracts **negative constraints** — things to NEVER do again. |
 | **Phase 2: REM** | REM Sleep | Abstracts successful patterns into **reusable strategies** with confidence scores. Merges new evidence into existing strategies. |
 | **Phase 3: Consolidation** | Memory Writing | Writes strategies and constraints to disk. Updates the dream journal. Prunes old traces. |
+
+Multiple dream sessions can run simultaneously — for example, one consolidating "authentication" traces while another consolidates "database" traces — all while you continue coding in another session.
 
 ---
 
@@ -94,12 +98,12 @@ After task completion — or on a **recurring schedule** — the Dream Engine ru
 |-----------|--------------------------|-------------------------------|
 | **Memory** | `CLAUDE.md` + auto-memory (preferences only) | Hierarchical strategies with confidence scores, negative constraints, dream journal |
 | **Learning** | None between sessions | Dream Engine extracts strategies from successes and constraints from failures |
-| **Scheduled Learning** | Not possible | Scheduled tasks run the Dream Engine nightly — the system learns while you sleep |
+| **Unihemispheric Dreaming** | Not possible | Dream sessions run in parallel with work — on-demand, goal-focused, scheduled, or all three at once |
 | **Planning** | Ad-hoc, flat task decomposition | 4-level hierarchical decomposition (L1-L4) with strategy injection |
 | **Error prevention** | None | Negative constraints loaded before every task; high-severity constraints always enforced |
 | **Task logging** | No structured logging | Hierarchical traces with parent-child linking, outcomes, and confidence |
 | **Knowledge reuse** | Manual copy-paste | Automatic strategy matching via trigger keywords and composite scoring |
-| **Parallel sessions** | Independent worktrees | Each session logs traces; scheduled dream consolidation merges learnings from all sessions |
+| **Parallel sessions** | Independent worktrees | Work sessions + dream sessions run simultaneously; each dream can focus on specific goals |
 
 ### Concrete Example: What Changes
 
@@ -114,7 +118,7 @@ After task completion — or on a **recurring schedule** — the Dream Engine ru
 2. Claude searches strategies — finds `seed_3_api-endpoint` (REST API creation)
 3. Claude follows the strategy steps, adapted to your project
 4. Actions are logged as L3 traces with parent linking
-5. After completion (or at the next scheduled dream), the Dream Engine consolidates the experience
+5. After completion, a goal-focused dream session consolidates the experience in parallel
 6. Next time: higher-confidence strategy, even better execution
 
 ---
@@ -134,6 +138,7 @@ DreamOS adapts the `llmunix-core` Dream Engine from RoClaw (a physical robot) to
 | Cortex (goal planner) | SystemAgent |
 | Cerebellum (motor control) | Executing sub-agents |
 | Hippocampus (memory consolidation) | DreamEngineAgent |
+| Circadian sleep cycle | **Replaced**: Unihemispheric (dolphin) dreaming — parallel, continuous, goal-focused |
 
 ### Three Core Agents
 
@@ -141,30 +146,44 @@ DreamOS adapts the `llmunix-core` Dream Engine from RoClaw (a physical robot) to
 |-------|----------------|----------|
 | **SystemAgent** | Cortex | Executive orchestrator — decomposes goals, queries strategies, delegates to specialized agents |
 | **MemoryAnalysisAgent** | Hippocampal Encoder | Real-time trace logger — captures execution events as structured hierarchical traces |
-| **DreamEngineAgent** | Hippocampus | Memory consolidator — runs the 3-phase SWS/REM/Consolidation cycle |
+| **DreamEngineAgent** | Hippocampus | Memory consolidator — runs the 3-phase SWS/REM/Consolidation cycle. Supports parallel, goal-focused dreaming. |
 
-### The Dream Cycle
+### Unihemispheric Dream Architecture
+
+Unlike traditional circadian models (dream once at night), DreamOS uses **dolphin-inspired unihemispheric sleep**: dreaming happens continuously alongside active work.
 
 ```
-Execution (awake)          Dream (consolidation)         Next Execution (smarter)
-┌──────────────┐          ┌──────────────────────┐       ┌──────────────────┐
-│ User tasks   │  traces  │ Phase 1: SWS         │       │ Load strategies  │
-│ Tool calls   │ ──────>  │  - Analyze failures  │       │ Load constraints │
-│ Outcomes     │          │  - Extract anti-pats  │       │ Apply to planning│
-│ Successes    │          │                      │       │ Better execution │
-│ Failures     │          │ Phase 2: REM         │       │ Fewer mistakes   │
-└──────────────┘          │  - Abstract patterns │       └──────────────────┘
-                          │  - Create strategies │              ↑
-                          │  - Merge evidence    │              │
-                          │                      │        strategies
-                          │ Phase 3: Consolidate │        constraints
-                          │  - Write to disk     │ ───────────┘
-                          │  - Update journal    │
-                          │  - Prune old traces  │
-                          └──────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    Claude Code Desktop                          │
+│                                                                 │
+│  Session 1 (work)          Session 2 (work)                    │
+│  ┌──────────────┐          ┌──────────────┐                    │
+│  │ Building     │          │ Fixing       │                    │
+│  │ auth system  │ traces   │ API bugs     │ traces             │
+│  │              │───┐      │              │───┐                │
+│  └──────────────┘   │      └──────────────┘   │                │
+│                     │                         │                │
+│  Session 3 (dream)  ▼      Session 4 (dream)  ▼                │
+│  ┌──────────────┐          ┌──────────────┐                    │
+│  │ Dream:       │          │ Dream:       │      Session 5     │
+│  │ "auth" traces│          │ "API" traces │      (scheduled)   │
+│  │ SWS→REM→    │          │ SWS→REM→    │    ┌────────────┐  │
+│  │ Consolidate  │          │ Consolidate  │    │ Full sweep │  │
+│  └──────┬───────┘          └──────┬───────┘    │ dream @9PM │  │
+│         │                         │            └─────┬──────┘  │
+│         ▼                         ▼                  ▼         │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              system/memory/strategies/                   │   │
+│  │  New auth strategies ← │ → API strategies  ← full sweep │   │
+│  │  New constraints       │   Updated scores    pruning    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-With scheduled tasks, the "Dream" phase runs automatically — no manual trigger needed.
+Dream sessions can be triggered three ways:
+- **On-demand**: `/llmunix dream authentication` — dream about specific traces right now
+- **After task completion**: The `/llmunix` command auto-triggers a goal-focused dream
+- **Scheduled**: A recurring task runs a full-sweep or goal-focused dream on a timer
 
 ---
 
@@ -204,9 +223,9 @@ Claude will run the necessary commands for you.
 
 The `system/memory/` directory will be created in your project folder on first use. This is where strategies, constraints, and traces are stored.
 
-### Step 3: Set Up Scheduled Dream Consolidation
+### Step 3: Set Up Dreaming
 
-This is the most powerful feature of DreamOS on Claude Code Desktop. See the [Scheduled Dream Consolidation](#scheduled-dream-consolidation) section below for the full setup guide.
+DreamOS dreams can be triggered on-demand, after tasks, or on a schedule. See the [Unihemispheric Dreaming](#unihemispheric-dreaming) section below for the full guide.
 
 ### Verify Installation
 
@@ -226,128 +245,216 @@ You can also use the `/llmunix` command:
 
 ---
 
-## Scheduled Dream Consolidation
+## Unihemispheric Dreaming
 
-Claude Code Desktop's **scheduled tasks** feature lets DreamOS run its Dream Engine automatically on a recurring schedule. This is the recommended way to use DreamOS — your traces accumulate during the day, and the Dream Engine consolidates them into strategies overnight.
+Dolphins sleep with one brain hemisphere at a time — they never fully stop. DreamOS works the same way: **dream sessions run in parallel with active work sessions**, consolidating traces into strategies without interrupting your flow.
 
-### Why Schedule the Dream?
+There is no circadian constraint. Dreams don't wait for "night". They can happen anytime, in any combination:
 
-Without scheduling, dream consolidation only runs when you explicitly ask for it or when the `/llmunix` command finishes a task. By scheduling it:
+| Trigger | How It Works | Best For |
+|---------|-------------|----------|
+| **On-demand** | `/llmunix dream [keywords]` | Consolidate after finishing a specific feature or fixing a class of bugs |
+| **After task completion** | Automatic — `/llmunix` triggers a goal-focused dream when done | Every task contributes to learning immediately |
+| **Scheduled** | Recurring Desktop task (hourly, daily, etc.) | Full-sweep catch-all to consolidate anything the focused dreams missed |
+| **Parallel multi-goal** | `/llmunix dream --parallel auth \| API \| database` | Dream about multiple domains simultaneously after a big sprint |
 
-- **Automatic learning**: The system learns from your work every day without any manual intervention
-- **Cross-session consolidation**: Traces from all your sessions (including parallel worktree sessions) get consolidated together
-- **Background processing**: Consolidation runs as a separate session — it never interrupts your active work
-- **Catch-up behavior**: If your computer was asleep, Desktop runs a catch-up consolidation when it wakes
+### On-Demand Dreaming
 
-### How to Set Up
+Trigger a dream anytime from any Code session:
+
+```
+/llmunix dream                              # Full sweep — process all unprocessed traces
+/llmunix dream authentication               # Goal-focused — only auth-related traces
+/llmunix dream L3                           # Level-focused — only tactical traces
+/llmunix dream authentication L3            # Combined — auth tactical traces
+/llmunix dream --parallel auth | API | db   # Parallel — three dream sessions at once
+/llmunix dream status                       # Check memory state, unprocessed trace count
+```
+
+Each dream runs as its own session with a unique dream ID, so multiple dreams can safely run in parallel without conflicts.
+
+#### Goal-Focused Dreams
+
+Goal-focused dreams only process traces whose `goal` field matches your keywords (50%+ overlap). This is powerful because:
+
+- **Fast**: Processes a subset of traces instead of everything
+- **Targeted**: Produces strategies specific to the domain you just worked on
+- **Parallel-safe**: Won't interfere with other dream sessions or active work
+- **Immediate**: Results are available to your next session right away
+
+Example: After building an authentication system across 3 sessions, run:
+
+```
+/llmunix dream authentication JWT middleware
+```
+
+This produces strategies specifically about auth patterns, ignoring unrelated traces from other work.
+
+#### Parallel Multi-Goal Dreams
+
+After a big sprint that touched multiple domains, launch parallel dream sessions:
+
+```
+/llmunix dream --parallel user authentication | REST API design | database schema | React components
+```
+
+This creates 4 separate dream sessions, each focused on one domain. They run concurrently in parallel Desktop sessions:
+
+```
+Dream Session A ──> "user authentication" traces ──> auth strategies
+Dream Session B ──> "REST API design" traces     ──> API strategies
+Dream Session C ──> "database schema" traces     ──> DB strategies
+Dream Session D ──> "React components" traces    ──> React strategies
+        │                                              │
+        └──────── all write to shared strategies/ ─────┘
+```
+
+Each dream uses its own unique dream ID for concurrency safety.
+
+### Scheduled Dreams
+
+For a safety net that catches any traces not processed by on-demand dreams, set up a recurring scheduled task.
+
+#### How to Set Up
 
 1. Open **Claude Desktop** and switch to the **Code** tab
 2. Click **Schedule** in the sidebar
 3. Click **+ New task**
-4. Configure the task with these settings:
+4. Configure the task:
 
 | Field | Value |
 |-------|-------|
 | **Name** | `dreamos-dream` |
-| **Description** | Nightly DreamOS memory consolidation — processes traces into strategies and constraints |
-| **Prompt** | See [Dream Prompt](#the-dream-prompt) below |
-| **Frequency** | **Daily** at your preferred time (e.g., 9:00 PM) or **Weekdays** for work projects |
+| **Description** | DreamOS full-sweep memory consolidation |
+| **Prompt** | See [Full-Sweep Dream Prompt](#full-sweep-dream-prompt) below |
+| **Frequency** | **Hourly** (aggressive), **Daily** (standard), or **Weekdays** (work projects) |
 | **Working folder** | Your project folder (the one containing `system/memory/`) |
-| **Permission mode** | **Auto accept edits** (recommended — the Dream Engine only reads traces and writes strategy files) |
+| **Permission mode** | **Auto accept edits** (the Dream Engine only reads traces and writes strategy files) |
 | **Worktree** | Off (the Dream Engine reads/writes to `system/memory/` which should be shared) |
 
-5. Click **Run now** to test the task. Watch for any permission prompts and select "always allow" for each one. This ensures future runs execute without stalling.
+5. Click **Run now** to test. Select "always allow" for any permission prompts to avoid future stalls.
 
 #### Alternative: Ask Claude to Create It
 
-In any Code session, you can describe the task in plain language:
-
 ```
-Set up a daily scheduled task called "dreamos-dream" that runs every day at 9 PM.
-It should run the DreamOS dream consolidation cycle: read all traces in
-system/memory/traces/ since the last dream journal entry, execute the 3-phase
-Dream Engine (SWS for failure analysis, REM for strategy abstraction,
-Consolidation for writing to disk), and update the dream journal.
+Set up an hourly scheduled task called "dreamos-dream" that runs the DreamOS
+full-sweep dream consolidation cycle on system/memory/traces/.
 ```
 
-Claude will create the scheduled task for you.
-
-### The Dream Prompt
-
-Use this prompt when configuring the scheduled task:
+Or for goal-focused scheduled dreams:
 
 ```
-You are running the DreamOS Dream Engine consolidation cycle. Execute these steps:
+Set up two daily scheduled tasks:
+1. "dreamos-dream-api" at 12 PM — goal-focused dream for "API endpoint" traces
+2. "dreamos-dream-sweep" at 9 PM — full-sweep dream to catch everything else
+```
 
-1. Read system/memory/strategies/_dream_journal.md to find the timestamp of the last dream cycle.
+#### Full-Sweep Dream Prompt
+
+Use this prompt for a scheduled full-sweep dream:
+
+```
+You are running the DreamOS Dream Engine full-sweep consolidation. Execute these steps:
+
+1. Read system/memory/strategies/_dream_journal.md to find the last dream timestamp.
 
 2. Read all trace files in system/memory/traces/ (files matching trace_*.md).
    Only process traces NEWER than the last dream timestamp.
-   If no traces exist or none are newer, report "No new traces to process" and stop.
+   If no new traces, report "No new traces to process" and stop.
 
-3. Execute Phase 1 — Slow Wave Sleep (Failure Analysis):
-   - Filter traces with outcome = FAILURE or PARTIAL with low confidence (< 0.3)
-   - For each failure: identify what went wrong, what strategy was applied (if any), and what actions caused the failure
-   - Extract negative constraints (what NOT to do) with severity ratings
-   - Deduplicate against existing constraints in system/memory/strategies/_negative_constraints.md
+3. Phase 1 — Slow Wave Sleep (Failure Analysis):
+   - Filter traces with outcome = FAILURE or PARTIAL with confidence < 0.3
+   - For each failure: identify root cause, actions that led to failure
+   - Extract negative constraints with severity ratings
+   - Deduplicate against system/memory/strategies/_negative_constraints.md
 
-4. Execute Phase 2 — REM Sleep (Strategy Abstraction):
+4. Phase 2 — REM Sleep (Strategy Abstraction):
    - Filter traces with outcome = SUCCESS or high-confidence PARTIAL (>= 0.5)
    - Group by hierarchy level (L1-L4)
-   - For each success: compress actions into essential steps
-   - Search existing strategies in system/memory/strategies/level_*/ for matches (50%+ keyword overlap)
-   - If match: merge evidence (version++, success_count++, confidence += 0.05, cap at 0.95)
-   - If no match: create new strategy (confidence: 0.5) with trigger keywords, preconditions, and steps
-   - Check deprecation: if any strategy has failure_count > success_count * 2 (min 3 attempts), mark deprecated
+   - For each success: compress actions, search for matching strategies (50%+ overlap)
+   - Match: merge evidence (version++, success_count++, confidence += 0.05, cap 0.95)
+   - No match: create new strategy (confidence: 0.5)
+   - Deprecation: if failure_count > success_count * 2 (min 3 attempts), mark deprecated
 
-5. Execute Phase 3 — Consolidation:
-   - Write new/updated constraints to system/memory/strategies/_negative_constraints.md
-   - Write new strategies to appropriate level directories (level_1_epics through level_4_reactive)
-   - Update existing strategy files with merged evidence
-   - Append a summary entry to system/memory/strategies/_dream_journal.md
-   - Prune trace files older than 7 days (never delete today's trace file)
+5. Phase 3 — Consolidation:
+   - Write constraints to system/memory/strategies/_negative_constraints.md
+   - Write strategies to level_1_epics through level_4_reactive directories
+   - Append summary to system/memory/strategies/_dream_journal.md
+   - Prune trace files older than 7 days (never delete today's)
    - NEVER modify files in system/memory/strategies/_seeds/
 
-6. Report what was learned: strategies created, strategies updated, constraints extracted, traces pruned.
+6. Report: strategies created, updated, constraints extracted, traces pruned.
 ```
 
-### Managing the Scheduled Task
+#### Goal-Focused Scheduled Dream Prompt
 
-Click the task in the **Schedule** list to:
+For a scheduled task that dreams about a specific domain:
 
-- **Run now**: trigger an immediate consolidation without waiting for the next scheduled time
-- **Toggle repeats**: pause or resume scheduled runs
-- **Edit**: change the prompt, frequency, or folder
-- **Review history**: see every past run and its results
+```
+You are running a DreamOS goal-focused dream consolidation.
+Goal filter: [YOUR KEYWORDS HERE, e.g., "authentication JWT middleware"]
+
+1. Read the dream journal for the last timestamp.
+2. Read all traces, but ONLY process traces whose goal matches these keywords
+   (50%+ word overlap). Skip all non-matching traces.
+3. Run Phase 1 (SWS), Phase 2 (REM), Phase 3 (Consolidation) on matched traces only.
+4. Do NOT prune old traces (other dream sessions may need them).
+5. Tag the journal entry with mode: "goal-focused" and filter: "[keywords]".
+```
+
+### Managing Scheduled Tasks
+
+Click a task in the **Schedule** list to:
+
+- **Run now**: trigger an immediate consolidation
+- **Toggle repeats**: pause or resume
+- **Edit**: change prompt, frequency, or folder
+- **Review history**: see past runs and results
 - **Review allowed permissions**: see and revoke saved tool approvals
 
-You can also manage the task by asking Claude in any session:
+You can also manage by asking Claude: `"Pause my dreamos-dream scheduled task"`, `"Show my scheduled tasks"`.
+
+The task prompt is stored at `~/.claude/scheduled-tasks/<task-name>/SKILL.md`. Edit directly — changes take effect on the next run.
+
+### Recommended Setups
+
+#### Solo Developer — Simple
+
+One scheduled full-sweep task + on-demand dreaming:
 
 ```
-Pause my dreamos-dream scheduled task
+Scheduled: dreamos-dream (daily at 9 PM) — full sweep
+On-demand: /llmunix dream [keywords] — after finishing a feature
 ```
 
-```
-Show me the history of my dreamos-dream scheduled task
-```
+#### Solo Developer — Aggressive Learning
 
-### Editing the Task on Disk
-
-The scheduled task prompt is stored at:
+Hourly full-sweep + on-demand goal-focused:
 
 ```
-~/.claude/scheduled-tasks/dreamos-dream/SKILL.md
+Scheduled: dreamos-dream (hourly) — full sweep every hour
+On-demand: /llmunix dream [keywords] — for immediate targeted learning
 ```
 
-This file uses YAML frontmatter for `name` and `description`, with the prompt as the body. You can edit it directly — changes take effect on the next run. Schedule, folder, model, and enabled state are changed through the Desktop Edit form or by asking Claude.
+#### Team / Multi-Domain Project
+
+Multiple scheduled goal-focused tasks + a nightly sweep:
+
+```
+Scheduled: dreamos-dream-frontend (daily 12 PM) — "React components UI"
+Scheduled: dreamos-dream-backend  (daily 12 PM) — "API endpoint database"
+Scheduled: dreamos-dream-sweep    (daily 9 PM)  — full sweep catch-all
+On-demand: /llmunix dream --parallel [goals] — after sprints
+```
 
 ### Important Notes
 
-- **Desktop must be open**: Scheduled tasks run locally. The Claude Desktop app must be running and your computer must be awake for the task to fire.
-- **Prevent sleep**: Enable **Keep computer awake** in Settings > Desktop app > General to prevent idle sleep. Closing the laptop lid still puts it to sleep.
-- **Missed runs**: If your computer was asleep through a scheduled time, Desktop runs one catch-up consolidation when it wakes (within 7 days).
-- **Timing**: Each task gets a fixed delay of up to 10 minutes after the scheduled time to stagger API traffic. A task scheduled for 9 PM always starts at the same offset.
-- **Permission stalls**: If the task needs a tool permission it doesn't have, the run stalls until you approve it. Run the task once manually first and select "always allow" to avoid this.
+- **Desktop must be open**: Scheduled tasks run locally. Claude Desktop must be running and your computer awake.
+- **Prevent sleep**: Enable **Keep computer awake** in Settings > Desktop app > General.
+- **Missed runs**: If your computer was asleep, Desktop runs one catch-up consolidation when it wakes (within 7 days).
+- **Parallel safety**: Each dream gets a unique dream ID. Multiple dreams can safely write to the same strategy directories.
+- **Goal-focused dreams skip pruning**: Only full-sweep dreams prune old traces, since goal-focused dreams process a subset.
+- **Permission stalls**: Run a task manually first and select "always allow" to avoid future stalls.
 
 ---
 
@@ -364,7 +471,7 @@ Once DreamOS is installed, it works **automatically** through `CLAUDE.md` instru
 3. Claude searches `system/memory/strategies/` → finds `seed_3_api-endpoint`
 4. Claude follows the strategy steps while adapting to your project
 5. Claude logs traces to `system/memory/traces/trace_2026-03-06.md`
-6. At the next scheduled dream (or after `/llmunix` completes), the Dream Engine consolidates
+6. After completion, a goal-focused dream session consolidates in parallel — or at the next scheduled dream
 
 **You'll notice:**
 - Claude mentions checking constraints before acting
@@ -427,28 +534,26 @@ Invoke the DreamEngineAgent sub-agent. Tell it to process all traces in
 system/memory/traces/ since the last dream journal entry.
 ```
 
-### Level 3: Parallel Sessions + Scheduled Dreams
+### Level 3: Unihemispheric Dreaming — Work and Dream Simultaneously
 
-Claude Code Desktop lets you run **multiple sessions in parallel**, each with its own Git worktree. Combined with scheduled dream consolidation, this creates a powerful workflow:
+Claude Code Desktop lets you run **multiple sessions in parallel**. DreamOS exploits this for dolphin-style unihemispheric sleep: dream sessions run alongside work sessions.
 
 ```
-Session 1 (feature A) ────────────────────────> traces logged
-Session 2 (feature B) ────────────────────────> traces logged
-Session 3 (bug fixes) ────────────────────────> traces logged
-                                                     │
-                                               9:00 PM ▼
-                                          ┌─────────────────┐
-                                          │ Scheduled Dream  │
-                                          │ Consolidation    │
-                                          │ - All 3 sessions │
-                                          │   traces merged  │
-                                          │ - Strategies     │
-                                          │   created/updated│
-                                          └─────────────────┘
-                                                     │
-Next day ◄───────────────────────────────────────────┘
-All sessions benefit from consolidated strategies
+10:00 AM  Session 1 (work): Building auth system ──────────────> traces
+10:30 AM  Session 2 (work): Fixing API bugs ──────────────────> traces
+11:00 AM  You: "/llmunix dream authentication"
+          Session 3 (dream): Consolidating auth traces ───────> strategies
+          ↑ runs in parallel — you keep working in Sessions 1 & 2
+11:15 AM  Session 3 completes → auth strategies available immediately
+12:00 PM  Scheduled dream fires → full sweep of remaining traces
+ 2:00 PM  You: "/llmunix dream --parallel API design | error handling"
+          Session 4 (dream): API traces ──────────────────────> strategies
+          Session 5 (dream): Error handling traces ───────────> strategies
+          ↑ both run in parallel with each other AND your work sessions
+ 3:00 PM  Session 1 starts a new task → loads the NEW strategies from dreams
 ```
+
+The key insight: **there is no "awake" vs "asleep" boundary**. Dreams happen continuously, focused on what matters most right now.
 
 ### Level 4: Power User — Inspecting and Managing Memory
 
@@ -509,36 +614,45 @@ git pull  # Now everyone has the team's learned strategies
 
 The `system/memory/traces/` directory is gitignored by default (traces are volatile, personal session logs).
 
-### Example: Full Day with DreamOS
+### Example: Full Day with Unihemispheric Dreaming
 
 Here's what a productive DreamOS + Claude Code Desktop day looks like:
 
 ```
-Morning:
+9:00 AM — Start of day:
 1. Open Claude Desktop → Code tab → select project folder
 2. Claude loads CLAUDE.md → sees DreamOS → checks last dream journal entry
 3. You: "Build the user settings page with profile editing and password change"
 4. Claude queries strategies → finds seed_3_api-endpoint and seed_2_git-workflow
 5. Claude decomposes into L1 goal → L2 architecture → L3 tactical tasks
-6. Claude creates feature branch (applying git-workflow strategy)
-7. Claude builds the feature, logging traces at each level
-8. Task complete → traces stored for the scheduled dream
+6. Claude builds the feature, logging traces at each level
 
-Afternoon:
-9. You open a parallel session: "Now add email notification when password changes"
-10. Claude queries strategies → same seeds, but also checks recent traces
-11. Builds on the morning's work
+10:30 AM — Task complete, immediate dream:
+7. /llmunix auto-triggers a goal-focused dream: "settings page, profile, password"
+8. Dream runs in a parallel session while you read the output
+9. New strategy: "strat_3_settings-page" (confidence: 0.5)
 
-Evening (9 PM — Scheduled Dream):
-12. DreamOS scheduled task fires automatically
-13. Dream Engine processes ALL traces from both sessions
-14. New strategy created: "strat_3_settings-page" (confidence: 0.5)
-15. New constraint: "always validate email format before sending notifications"
-16. Dream journal updated with summary
+11:00 AM — Parallel session:
+10. You open Session 2: "Add email notification when password changes"
+11. Claude queries strategies → finds the NEW "strat_3_settings-page" from 20 min ago
+12. Builds on the morning's work with immediate learnings
 
-Next day:
-17. Similar task on another project → "strat_3_settings-page" transfers over
-18. Next dream cycle → strategy updated to version 2, confidence: 0.55
+12:00 PM — Scheduled dream fires:
+13. Full-sweep dream catches any traces the goal-focused dream missed
+14. New constraint: "always validate email format before sending notifications"
+
+2:00 PM — Multi-domain sprint wrap-up:
+15. You ran 3 sessions touching auth, API, and frontend
+16. /llmunix dream --parallel authentication | API endpoints | React components
+17. Three dream sessions consolidate simultaneously → three domain-specific strategies
+
+3:00 PM — Immediate benefits:
+18. You start a new task → loads all the strategies from today's dreams
+19. Claude is measurably smarter than it was at 9 AM
+
+Next week:
+20. Similar task on another project → all strategies transfer over
+21. Multiple dream cycles → strategies at version 3+, confidence: 0.7+
 ```
 
 ---
@@ -557,7 +671,7 @@ llmunix-dreamos/
 │   └── marketplace.json              # Marketplace config (for distribution)
 ├── llmunix-plugin/                   # Plugin package
 │   ├── .claude-plugin/
-│   │   └── plugin.json               # Plugin manifest (v2.1.0)
+│   │   └── plugin.json               # Plugin manifest (v3.0.0)
 │   ├── agents/                       # Same 3 agents (plugin scope)
 │   │   ├── SystemAgent.md
 │   │   ├── MemoryAnalysisAgent.md
@@ -591,7 +705,7 @@ llmunix-dreamos/
 
 ## How the Dream Engine Works
 
-The DreamEngineAgent executes three sequential phases, inspired by how biological brains consolidate memories during sleep.
+The DreamEngineAgent executes three sequential phases, inspired by how biological brains consolidate memories during sleep. Unlike traditional models, DreamOS supports **unihemispheric dreaming**: multiple dream sessions can run in parallel — each with optional goal and level filters — while the system continues active work. Each dream generates a unique dream ID for concurrency safety.
 
 ### Phase 1: Slow Wave Sleep (SWS) — Failure Analysis
 
