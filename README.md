@@ -1,10 +1,12 @@
 # LLMunix DreamOS
 
-**A Bio-Inspired Cognitive Operating System for Claude Code & Claude Cowork**
+**A Bio-Inspired Cognitive Operating System for Claude Code Desktop**
 
 > *"What if your AI assistant remembered what worked, learned from what failed, and got smarter every time you used it?"*
 
-DreamOS transforms Claude from a **stateless assistant that forgets everything between sessions** into a **learning system** that accumulates strategies, avoids past mistakes, and improves with every interaction. It brings the algorithmic rigor of hierarchical memory consolidation — proven in physical robotics — to the pure-markdown plugin ecosystem of Claude Code and Claude Cowork.
+DreamOS transforms Claude from a **stateless assistant that forgets everything between sessions** into a **learning system** that accumulates strategies, avoids past mistakes, and improves with every interaction. It brings the algorithmic rigor of hierarchical memory consolidation — proven in physical robotics — to the Claude Code Desktop plugin ecosystem.
+
+With **Claude Code Desktop's scheduled tasks**, DreamOS can run its Dream Engine automatically on a recurring schedule — consolidating your day's work into reusable strategies while you sleep.
 
 ---
 
@@ -12,14 +14,11 @@ DreamOS transforms Claude from a **stateless assistant that forgets everything b
 
 - [The Problem](#the-problem)
 - [The Solution](#the-solution-dreamos)
-- [What DreamOS Adds to Claude Code](#what-dreamos-adds-to-claude-code)
-- [What DreamOS Adds to Claude Cowork](#what-dreamos-adds-to-claude-cowork)
+- [What DreamOS Adds to Claude Code Desktop](#what-dreamos-adds-to-claude-code-desktop)
 - [Architecture Overview](#architecture-overview)
 - [Installation](#installation)
-  - [Claude Code (Terminal)](#option-1-claude-code-terminal)
-  - [Claude Cowork (Desktop)](#option-2-claude-cowork-desktop)
-- [Tutorial: Using DreamOS with Claude Code](#tutorial-using-dreamos-with-claude-code)
-- [Tutorial: Using DreamOS with Claude Cowork](#tutorial-using-dreamos-with-claude-cowork)
+- [Scheduled Dream Consolidation](#scheduled-dream-consolidation)
+- [Tutorial: Using DreamOS](#tutorial-using-dreamos)
 - [Directory Structure](#directory-structure)
 - [How the Dream Engine Works](#how-the-dream-engine-works)
 - [Seed Strategies](#seed-strategies)
@@ -31,7 +30,7 @@ DreamOS transforms Claude from a **stateless assistant that forgets everything b
 
 ## The Problem
 
-AI coding assistants today suffer from **cognitive amnesia**. Every time you start a new session with Claude Code or Claude Cowork, the slate is wiped clean:
+AI coding assistants today suffer from **cognitive amnesia**. Every time you start a new session with Claude, the slate is wiped clean:
 
 **1. No memory of what worked.** You solved a tricky React hydration bug last week using a specific pattern. Today, facing the same issue, Claude starts from scratch — suggesting the same wrong approaches you already tried and rejected.
 
@@ -43,7 +42,7 @@ AI coding assistants today suffer from **cognitive amnesia**. Every time you sta
 
 **5. Repeated mistakes across sessions.** Without persistent memory, the same anti-patterns reappear. The same debugging rabbit holes get explored. The same time gets wasted.
 
-This problem exists because **Claude Code and Claude Cowork are stateless by design**. Their built-in memory (`CLAUDE.md`, auto-memory) captures basic preferences but lacks the structure to store *strategies*, *anti-patterns*, *confidence scores*, or *hierarchical task decompositions*. There is no mechanism to analyze past sessions, extract what worked, discard what didn't, and synthesize reusable knowledge.
+This problem exists because **Claude is stateless by design**. Its built-in memory (`CLAUDE.md`, auto-memory) captures basic preferences but lacks the structure to store *strategies*, *anti-patterns*, *confidence scores*, or *hierarchical task decompositions*. There is no mechanism to analyze past sessions, extract what worked, discard what didn't, and synthesize reusable knowledge.
 
 ### The Cost of Forgetting
 
@@ -58,7 +57,7 @@ This problem exists because **Claude Code and Claude Cowork are stateless by des
 
 ## The Solution: DreamOS
 
-DreamOS is a **Claude Code / Claude Cowork plugin** that implements a biologically-inspired cognitive architecture. It is based on three innovations, originally proven in [RoClaw](https://github.com/EvolvingAgentsLabs/RoClaw) — a physical robot that learns to navigate rooms by consolidating motor traces into reusable strategies during "sleep" phases.
+DreamOS is a **Claude Code Desktop plugin** that implements a biologically-inspired cognitive architecture. It is based on three innovations, originally proven in [RoClaw](https://github.com/EvolvingAgentsLabs/RoClaw) — a physical robot that learns to navigate rooms by consolidating motor traces into reusable strategies during "sleep" phases.
 
 ### 1. Hierarchical Task Decomposition (L1-L4)
 
@@ -79,7 +78,7 @@ Every significant action is logged as a structured trace with: hierarchy level, 
 
 ### 3. Dream Engine (3-Phase Memory Consolidation)
 
-After task completion, the Dream Engine runs a bio-inspired consolidation cycle:
+After task completion — or on a **recurring schedule** — the Dream Engine runs a bio-inspired consolidation cycle:
 
 | Phase | Biological Analog | What It Does |
 |-------|-------------------|-------------|
@@ -89,23 +88,22 @@ After task completion, the Dream Engine runs a bio-inspired consolidation cycle:
 
 ---
 
-## What DreamOS Adds to Claude Code
+## What DreamOS Adds to Claude Code Desktop
 
-Claude Code is a powerful terminal-based AI coding tool. DreamOS extends it with:
-
-| Capability | Claude Code Alone | Claude Code + DreamOS |
-|-----------|-------------------|----------------------|
+| Capability | Claude Code Desktop Alone | Claude Code Desktop + DreamOS |
+|-----------|--------------------------|-------------------------------|
 | **Memory** | `CLAUDE.md` + auto-memory (preferences only) | Hierarchical strategies with confidence scores, negative constraints, dream journal |
 | **Learning** | None between sessions | Dream Engine extracts strategies from successes and constraints from failures |
+| **Scheduled Learning** | Not possible | Scheduled tasks run the Dream Engine nightly — the system learns while you sleep |
 | **Planning** | Ad-hoc, flat task decomposition | 4-level hierarchical decomposition (L1-L4) with strategy injection |
 | **Error prevention** | None | Negative constraints loaded before every task; high-severity constraints always enforced |
 | **Task logging** | No structured logging | Hierarchical traces with parent-child linking, outcomes, and confidence |
 | **Knowledge reuse** | Manual copy-paste | Automatic strategy matching via trigger keywords and composite scoring |
-| **Sub-agent coordination** | Built-in Task tool | Strategy-aware agents that query memory before acting |
+| **Parallel sessions** | Independent worktrees | Each session logs traces; scheduled dream consolidation merges learnings from all sessions |
 
 ### Concrete Example: What Changes
 
-**Without DreamOS** — You ask Claude Code to "add user registration endpoint":
+**Without DreamOS** — You ask Claude to "add user registration endpoint":
 1. Claude improvises a plan from scratch
 2. May or may not follow your project conventions
 3. If it fails, the failure is forgotten
@@ -116,48 +114,8 @@ Claude Code is a powerful terminal-based AI coding tool. DreamOS extends it with
 2. Claude searches strategies — finds `seed_3_api-endpoint` (REST API creation)
 3. Claude follows the strategy steps, adapted to your project
 4. Actions are logged as L3 traces with parent linking
-5. After completion, Dream Engine consolidates the experience
+5. After completion (or at the next scheduled dream), the Dream Engine consolidates the experience
 6. Next time: higher-confidence strategy, even better execution
-
----
-
-## What DreamOS Adds to Claude Cowork
-
-Claude Cowork is Anthropic's desktop application that brings Claude Code's agentic capabilities to knowledge work beyond coding. It can read/write local files, coordinate sub-agents, and run long tasks autonomously. DreamOS supercharges it with:
-
-| Capability | Cowork Alone | Cowork + DreamOS |
-|-----------|-------------|-----------------|
-| **Session memory** | No memory across sessions | Strategies, constraints, and journal persist on disk |
-| **Background learning** | None | DreamEngineAgent consolidates while you work |
-| **Scheduled consolidation** | Not possible | Schedule `/llmunix dream` to run nightly via Cowork's scheduled tasks |
-| **Skill evolution** | Static skills from plugins | Strategies evolve with every task — confidence scores update, new patterns emerge |
-| **Team knowledge** | Each user starts from zero | Shared `system/memory/strategies/` directory = team-wide accumulated knowledge |
-| **Failure prevention** | None | Negative constraints prevent repeating costly mistakes |
-
-### The Cowork Advantage: Asynchronous Dreaming
-
-Cowork's killer feature for DreamOS is **background execution**. While you code:
-
-```mermaid
-sequenceDiagram
-    participant You as You (working)
-    participant DE1 as DreamEngine (background)
-
-    activate You
-    Note over You: Morning coding session
-    You->>DE1: Traces accumulated
-    activate DE1
-    Note over DE1: Consolidates morning<br/>traces into strategies
-    deactivate DE1
-    Note over You: Afternoon coding session
-    You->>DE1: Traces accumulated
-    activate DE1
-    Note over DE1: Consolidates afternoon<br/>traces into strategies
-    deactivate DE1
-    deactivate You
-```
-
-The DreamEngineAgent runs as a background Cowork task, continuously processing your traces and updating strategies — without interrupting your workflow.
 
 ---
 
@@ -187,34 +145,26 @@ DreamOS adapts the `llmunix-core` Dream Engine from RoClaw (a physical robot) to
 
 ### The Dream Cycle
 
-```mermaid
-flowchart LR
-    subgraph Execution ["Execution (awake)"]
-        E1[User tasks]
-        E2[Tool calls]
-        E3[Outcomes]
-        E4[Successes]
-        E5[Failures]
-    end
-
-    subgraph Dream ["Dream (consolidation)"]
-        D1["<b>Phase 1: SWS</b><br/>- Analyze failures<br/>- Extract anti-patterns"]
-        D2["<b>Phase 2: REM</b><br/>- Abstract patterns<br/>- Create strategies<br/>- Merge evidence"]
-        D3["<b>Phase 3: Consolidate</b><br/>- Write to disk<br/>- Update journal<br/>- Prune old traces"]
-        D1 --> D2 --> D3
-    end
-
-    subgraph Next ["Next Execution (smarter)"]
-        N1[Load strategies]
-        N2[Load constraints]
-        N3[Apply to planning]
-        N4[Better execution]
-        N5[Fewer mistakes]
-    end
-
-    Execution -- "traces" --> Dream
-    Dream -- "strategies &<br/>constraints" --> Next
 ```
+Execution (awake)          Dream (consolidation)         Next Execution (smarter)
+┌──────────────┐          ┌──────────────────────┐       ┌──────────────────┐
+│ User tasks   │  traces  │ Phase 1: SWS         │       │ Load strategies  │
+│ Tool calls   │ ──────>  │  - Analyze failures  │       │ Load constraints │
+│ Outcomes     │          │  - Extract anti-pats  │       │ Apply to planning│
+│ Successes    │          │                      │       │ Better execution │
+│ Failures     │          │ Phase 2: REM         │       │ Fewer mistakes   │
+└──────────────┘          │  - Abstract patterns │       └──────────────────┘
+                          │  - Create strategies │              ↑
+                          │  - Merge evidence    │              │
+                          │                      │        strategies
+                          │ Phase 3: Consolidate │        constraints
+                          │  - Write to disk     │ ───────────┘
+                          │  - Update journal    │
+                          │  - Prune old traces  │
+                          └──────────────────────┘
+```
+
+With scheduled tasks, the "Dream" phase runs automatically — no manual trigger needed.
 
 ---
 
@@ -223,138 +173,185 @@ flowchart LR
 ### Prerequisites
 
 - **Claude Pro, Max, Team, or Enterprise** subscription
-- **Claude Code** (for terminal usage): Install with `curl -fsSL https://claude.ai/install.sh | bash`
-- **Claude Desktop** (for Cowork usage): Download from [claude.com/download](https://claude.com/download)
+- **Claude Desktop** app: Download from [claude.com/download](https://claude.com/download) (macOS or Windows)
 
-### Option 1: Claude Code (Terminal)
+### Step 1: Install the Plugin
 
-#### Method A: Ask Claude Code to Install It (Recommended)
+Open **Claude Desktop** and switch to the **Code** tab. Then install the DreamOS plugin using one of these methods:
 
-The simplest way to install DreamOS is to ask Claude Code directly inside any conversation:
+#### Method A: Install via the Plugin Manager (Recommended)
+
+1. Click the **+** button next to the prompt box
+2. Select **Plugins**
+3. Select **Add plugin** to open the plugin browser
+4. Search for `llmunix-dreamos` and install it
+
+#### Method B: Ask Claude to Install It
+
+In any Code session, simply ask:
 
 ```
 Please install the llmunix-dreamos plugin from EvolvingAgentsLabs globally
 ```
 
-Claude Code will run the necessary commands for you:
+Claude will run the necessary commands for you.
 
-```bash
-claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
-claude plugin install llmunix-plugin@llmunix-dreamos --scope user
-```
+### Step 2: Open Your Project
 
-That's it — the plugin is now available in all your Claude Code sessions.
+1. Start a **new session** in the Code tab
+2. Select your project folder — or create a new one
+3. DreamOS activates automatically when the plugin is installed
 
-#### Method B: Install via CLI Commands
+The `system/memory/` directory will be created in your project folder on first use. This is where strategies, constraints, and traces are stored.
 
-If you prefer to run the commands yourself:
+### Step 3: Set Up Scheduled Dream Consolidation
 
-```bash
-# 1. Add the marketplace
-claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
-
-# 2. Install the plugin globally (available in all sessions)
-claude plugin install llmunix-plugin@llmunix-dreamos --scope user
-```
-
-Or install at project scope (shared with your team via git):
-
-```bash
-claude plugin install llmunix-plugin@llmunix-dreamos --scope project
-```
-
-#### Method C: Run Locally Without Installing
-
-For development or one-off testing:
-
-```bash
-# Clone the repository
-git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
-
-# Start Claude Code with the plugin loaded directly
-cd your-project
-claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
-```
-
-#### Method D: Manual Setup (Standalone Project)
-
-If you want DreamOS as the foundation for a new project:
-
-```bash
-# 1. Clone it as your project root
-git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git my-project
-cd my-project
-
-# 2. Start Claude Code — CLAUDE.md loads automatically
-claude
-```
-
-The `CLAUDE.md` at the root instructs Claude to use the DreamOS cognitive architecture. The agents in `.claude/agents/` are auto-discovered by Claude Code.
-
-#### Method E: Add to an Existing Project
-
-```bash
-# 1. Copy the system memory into your project
-cp -r /path/to/llmunix-dreamos/system ./system
-cp -r /path/to/llmunix-dreamos/.claude ./
-
-# 2. Append DreamOS instructions to your existing CLAUDE.md
-cat /path/to/llmunix-dreamos/CLAUDE.md >> ./CLAUDE.md
-
-# 3. Start Claude Code
-claude
-```
-
-### Option 2: Claude Cowork (Desktop)
-
-#### Step 1: Prepare the Plugin Directory
-
-```bash
-# Clone the repository
-git clone https://github.com/EvolvingAgentsLabs/llmunix-dreamos.git
-```
-
-#### Step 2: Open in Cowork
-
-1. Open **Claude Desktop**
-2. Switch to the **Cowork** tab
-3. Click **"Work in a folder"** and select the `llmunix-dreamos` directory (or your project that contains the DreamOS files)
-
-#### Step 3: Configure Global Instructions (Optional)
-
-1. Go to **Settings > Cowork**
-2. Click **"Edit"** next to **Global instructions**
-3. Add:
-   ```
-   Before starting any complex task, check system/memory/strategies/_negative_constraints.md
-   for anti-patterns to avoid. Search system/memory/strategies/ for relevant strategies.
-   After completing complex tasks, run the DreamEngineAgent for memory consolidation.
-   ```
-4. Click **"Save"**
-
-#### Step 4: Install as a Cowork Plugin
-
-1. In the Cowork sidebar, click **"Customize"**
-2. Click **"Browse plugins"** or upload the plugin ZIP
-3. Alternatively, point Cowork to the `llmunix-plugin/` directory
+This is the most powerful feature of DreamOS on Claude Code Desktop. See the [Scheduled Dream Consolidation](#scheduled-dream-consolidation) section below for the full setup guide.
 
 ### Verify Installation
 
-After installation, test that DreamOS is active:
+After installation, test that DreamOS is active by typing in any Code session:
 
 ```
-# In Claude Code terminal:
 What strategies do you have loaded? Check system/memory/strategies/_seeds/
-
-# Or use the /llmunix command:
-/llmunix List all available seed strategies
 ```
 
 Claude should read the seed strategies and report 6 bootstrap strategies.
 
+You can also use the `/llmunix` command:
+
+```
+/llmunix List all available seed strategies
+```
+
 ---
 
-## Tutorial: Using DreamOS with Claude Code
+## Scheduled Dream Consolidation
+
+Claude Code Desktop's **scheduled tasks** feature lets DreamOS run its Dream Engine automatically on a recurring schedule. This is the recommended way to use DreamOS — your traces accumulate during the day, and the Dream Engine consolidates them into strategies overnight.
+
+### Why Schedule the Dream?
+
+Without scheduling, dream consolidation only runs when you explicitly ask for it or when the `/llmunix` command finishes a task. By scheduling it:
+
+- **Automatic learning**: The system learns from your work every day without any manual intervention
+- **Cross-session consolidation**: Traces from all your sessions (including parallel worktree sessions) get consolidated together
+- **Background processing**: Consolidation runs as a separate session — it never interrupts your active work
+- **Catch-up behavior**: If your computer was asleep, Desktop runs a catch-up consolidation when it wakes
+
+### How to Set Up
+
+1. Open **Claude Desktop** and switch to the **Code** tab
+2. Click **Schedule** in the sidebar
+3. Click **+ New task**
+4. Configure the task with these settings:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `dreamos-dream` |
+| **Description** | Nightly DreamOS memory consolidation — processes traces into strategies and constraints |
+| **Prompt** | See [Dream Prompt](#the-dream-prompt) below |
+| **Frequency** | **Daily** at your preferred time (e.g., 9:00 PM) or **Weekdays** for work projects |
+| **Working folder** | Your project folder (the one containing `system/memory/`) |
+| **Permission mode** | **Auto accept edits** (recommended — the Dream Engine only reads traces and writes strategy files) |
+| **Worktree** | Off (the Dream Engine reads/writes to `system/memory/` which should be shared) |
+
+5. Click **Run now** to test the task. Watch for any permission prompts and select "always allow" for each one. This ensures future runs execute without stalling.
+
+#### Alternative: Ask Claude to Create It
+
+In any Code session, you can describe the task in plain language:
+
+```
+Set up a daily scheduled task called "dreamos-dream" that runs every day at 9 PM.
+It should run the DreamOS dream consolidation cycle: read all traces in
+system/memory/traces/ since the last dream journal entry, execute the 3-phase
+Dream Engine (SWS for failure analysis, REM for strategy abstraction,
+Consolidation for writing to disk), and update the dream journal.
+```
+
+Claude will create the scheduled task for you.
+
+### The Dream Prompt
+
+Use this prompt when configuring the scheduled task:
+
+```
+You are running the DreamOS Dream Engine consolidation cycle. Execute these steps:
+
+1. Read system/memory/strategies/_dream_journal.md to find the timestamp of the last dream cycle.
+
+2. Read all trace files in system/memory/traces/ (files matching trace_*.md).
+   Only process traces NEWER than the last dream timestamp.
+   If no traces exist or none are newer, report "No new traces to process" and stop.
+
+3. Execute Phase 1 — Slow Wave Sleep (Failure Analysis):
+   - Filter traces with outcome = FAILURE or PARTIAL with low confidence (< 0.3)
+   - For each failure: identify what went wrong, what strategy was applied (if any), and what actions caused the failure
+   - Extract negative constraints (what NOT to do) with severity ratings
+   - Deduplicate against existing constraints in system/memory/strategies/_negative_constraints.md
+
+4. Execute Phase 2 — REM Sleep (Strategy Abstraction):
+   - Filter traces with outcome = SUCCESS or high-confidence PARTIAL (>= 0.5)
+   - Group by hierarchy level (L1-L4)
+   - For each success: compress actions into essential steps
+   - Search existing strategies in system/memory/strategies/level_*/ for matches (50%+ keyword overlap)
+   - If match: merge evidence (version++, success_count++, confidence += 0.05, cap at 0.95)
+   - If no match: create new strategy (confidence: 0.5) with trigger keywords, preconditions, and steps
+   - Check deprecation: if any strategy has failure_count > success_count * 2 (min 3 attempts), mark deprecated
+
+5. Execute Phase 3 — Consolidation:
+   - Write new/updated constraints to system/memory/strategies/_negative_constraints.md
+   - Write new strategies to appropriate level directories (level_1_epics through level_4_reactive)
+   - Update existing strategy files with merged evidence
+   - Append a summary entry to system/memory/strategies/_dream_journal.md
+   - Prune trace files older than 7 days (never delete today's trace file)
+   - NEVER modify files in system/memory/strategies/_seeds/
+
+6. Report what was learned: strategies created, strategies updated, constraints extracted, traces pruned.
+```
+
+### Managing the Scheduled Task
+
+Click the task in the **Schedule** list to:
+
+- **Run now**: trigger an immediate consolidation without waiting for the next scheduled time
+- **Toggle repeats**: pause or resume scheduled runs
+- **Edit**: change the prompt, frequency, or folder
+- **Review history**: see every past run and its results
+- **Review allowed permissions**: see and revoke saved tool approvals
+
+You can also manage the task by asking Claude in any session:
+
+```
+Pause my dreamos-dream scheduled task
+```
+
+```
+Show me the history of my dreamos-dream scheduled task
+```
+
+### Editing the Task on Disk
+
+The scheduled task prompt is stored at:
+
+```
+~/.claude/scheduled-tasks/dreamos-dream/SKILL.md
+```
+
+This file uses YAML frontmatter for `name` and `description`, with the prompt as the body. You can edit it directly — changes take effect on the next run. Schedule, folder, model, and enabled state are changed through the Desktop Edit form or by asking Claude.
+
+### Important Notes
+
+- **Desktop must be open**: Scheduled tasks run locally. The Claude Desktop app must be running and your computer must be awake for the task to fire.
+- **Prevent sleep**: Enable **Keep computer awake** in Settings > Desktop app > General to prevent idle sleep. Closing the laptop lid still puts it to sleep.
+- **Missed runs**: If your computer was asleep through a scheduled time, Desktop runs one catch-up consolidation when it wakes (within 7 days).
+- **Timing**: Each task gets a fixed delay of up to 10 minutes after the scheduled time to stagger API traffic. A task scheduled for 9 PM always starts at the same offset.
+- **Permission stalls**: If the task needs a tool permission it doesn't have, the run stalls until you approve it. Run the task once manually first and select "always allow" to avoid this.
+
+---
+
+## Tutorial: Using DreamOS
 
 ### Level 1: Passive Mode (Zero Effort)
 
@@ -367,7 +364,7 @@ Once DreamOS is installed, it works **automatically** through `CLAUDE.md` instru
 3. Claude searches `system/memory/strategies/` → finds `seed_3_api-endpoint`
 4. Claude follows the strategy steps while adapting to your project
 5. Claude logs traces to `system/memory/traces/trace_2026-03-06.md`
-6. After completion, Claude invokes the DreamEngineAgent to consolidate
+6. At the next scheduled dream (or after `/llmunix` completes), the Dream Engine consolidates
 
 **You'll notice:**
 - Claude mentions checking constraints before acting
@@ -415,7 +412,7 @@ The `/llmunix` command triggers the full cognitive pipeline with explicit orches
 4. After completion, runs full dream consolidation
 5. Reports: strategies applied, new strategies learned, constraints discovered
 
-#### Example 3: Triggering Manual Dream Consolidation
+#### Example 3: Manual Dream Consolidation
 
 After a long coding session where you didn't use `/llmunix` but traces accumulated:
 
@@ -430,7 +427,30 @@ Invoke the DreamEngineAgent sub-agent. Tell it to process all traces in
 system/memory/traces/ since the last dream journal entry.
 ```
 
-### Level 3: Power User — Inspecting and Managing Memory
+### Level 3: Parallel Sessions + Scheduled Dreams
+
+Claude Code Desktop lets you run **multiple sessions in parallel**, each with its own Git worktree. Combined with scheduled dream consolidation, this creates a powerful workflow:
+
+```
+Session 1 (feature A) ────────────────────────> traces logged
+Session 2 (feature B) ────────────────────────> traces logged
+Session 3 (bug fixes) ────────────────────────> traces logged
+                                                     │
+                                               9:00 PM ▼
+                                          ┌─────────────────┐
+                                          │ Scheduled Dream  │
+                                          │ Consolidation    │
+                                          │ - All 3 sessions │
+                                          │   traces merged  │
+                                          │ - Strategies     │
+                                          │   created/updated│
+                                          └─────────────────┘
+                                                     │
+Next day ◄───────────────────────────────────────────┘
+All sessions benefit from consolidated strategies
+```
+
+### Level 4: Power User — Inspecting and Managing Memory
 
 #### View your strategies:
 
@@ -473,7 +493,7 @@ Update the strategy in system/memory/strategies/level_3_tactical/some-strategy.m
 to set deprecated: true in the frontmatter. It keeps suggesting the wrong approach.
 ```
 
-### Level 4: Team Usage with Git
+### Level 5: Team Usage with Git
 
 DreamOS strategies are just Markdown files. Share them with your team:
 
@@ -489,140 +509,36 @@ git pull  # Now everyone has the team's learned strategies
 
 The `system/memory/traces/` directory is gitignored by default (traces are volatile, personal session logs).
 
----
+### Example: Full Day with DreamOS
 
-## Tutorial: Using DreamOS with Claude Cowork
-
-Cowork runs on the Claude Desktop app and excels at long-running, file-centric tasks. DreamOS leverages Cowork's unique capabilities for **asynchronous dreaming** and **scheduled consolidation**.
-
-### Getting Started in Cowork
-
-#### Step 1: Start a DreamOS-Powered Task
-
-1. Open Claude Desktop → switch to **Cowork** tab
-2. Select your project folder (containing the DreamOS `system/` directory)
-3. Describe your task:
-
-```
-Using the DreamOS system in this project: Build a data pipeline that reads
-CSV files from the input/ folder, validates the data, transforms it, and
-writes cleaned output to output/. Check strategies and constraints first.
-```
-
-4. Claude will:
-   - Read `CLAUDE.md` and recognize DreamOS
-   - Check `system/memory/strategies/_negative_constraints.md`
-   - Search for matching strategies
-   - Create a hierarchical plan with L1/L2/L3 decomposition
-   - Execute while logging traces
-   - Run dream consolidation when done
-
-#### Step 2: Monitor Progress
-
-While Claude works:
-- The **sidebar** shows real-time progress across sub-agents
-- Traces accumulate in `system/memory/traces/`
-- You can jump in to redirect: *"Don't use pandas, use polars instead"*
-- Claude logs the course correction as a trace (potentially becoming a future constraint)
-
-#### Step 3: Review Consolidated Results
-
-After the task completes:
-- Check `system/memory/strategies/_dream_journal.md` for what was learned
-- Check `system/memory/strategies/level_*/` for any new strategies
-- Check `system/memory/strategies/_negative_constraints.md` for new anti-patterns
-
-### Advanced Cowork Usage: Background Dreaming
-
-Cowork's most powerful feature for DreamOS is running the DreamEngineAgent in the background while you continue working.
-
-#### Method 1: Explicit Background Consolidation
-
-While working on a task, ask Claude:
-
-```
-In the background, run the DreamEngineAgent to consolidate all traces from today.
-Don't interrupt my current task — just process the traces and update strategies.
-```
-
-Claude spawns a background sub-agent that:
-1. Reads traces from `system/memory/traces/`
-2. Runs SWS → REM → Consolidation
-3. Writes new strategies and constraints
-4. You see the results next time you start a task
-
-#### Method 2: Scheduled Dream Cycles
-
-Use Cowork's scheduled tasks for automatic nightly consolidation:
-
-1. In Cowork, type `/schedule`
-2. Describe the task:
-   ```
-   Run the DreamOS dream consolidation cycle. Read all traces in
-   system/memory/traces/ newer than the last entry in
-   system/memory/strategies/_dream_journal.md. Execute the 3-phase
-   Dream Engine: analyze failures for constraints, abstract successes
-   into strategies, write results and prune old traces.
-   ```
-3. Set cadence: **Daily** (or **Weekdays** for work projects)
-4. Select the project folder
-5. Click **"Schedule"**
-
-Now, every night while your computer is on and Claude Desktop is open, DreamOS automatically consolidates your day's work into strategies.
-
-#### Method 3: End-of-Session Dreaming
-
-Create a habit: before closing Claude Desktop, run:
-
-```
-Dream time! Consolidate everything from today's session.
-```
-
-### Cowork Plugin: Using Slash Commands
-
-Once the plugin is installed, use these commands in Cowork:
-
-| Command | What It Does |
-|---------|-------------|
-| `/llmunix [goal]` | Full cognitive pipeline — strategy query, decomposition, execution, dreaming |
-| `/llmunix dream` | Run dream consolidation on recent traces |
-| `/llmunix status` | Show current memory stats (strategies count, constraints, last dream date) |
-
-### Cowork Team Workflow
-
-For teams using Claude Cowork with DreamOS:
-
-1. **Shared strategies directory**: Keep `system/memory/strategies/` in a shared repository or synced folder
-2. **Individual traces**: Each team member's `system/memory/traces/` stays local
-3. **Merged dreams**: After each team member's dream consolidation, review and commit new strategies to the shared repo
-4. **Growing team brain**: Over weeks, the team accumulates a rich strategy library that new members immediately benefit from
-
-### Example: Full Cowork Session
-
-Here's what a productive DreamOS + Cowork session looks like:
+Here's what a productive DreamOS + Claude Code Desktop day looks like:
 
 ```
 Morning:
-1. Open Claude Desktop → Cowork tab → select project folder
+1. Open Claude Desktop → Code tab → select project folder
 2. Claude loads CLAUDE.md → sees DreamOS → checks last dream journal entry
 3. You: "Build the user settings page with profile editing and password change"
 4. Claude queries strategies → finds seed_3_api-endpoint and seed_2_git-workflow
 5. Claude decomposes into L1 goal → L2 architecture → L3 tactical tasks
 6. Claude creates feature branch (applying git-workflow strategy)
 7. Claude builds the feature, logging traces at each level
-8. Task complete → DreamEngineAgent runs consolidation
-9. New strategy created: "strat_3_settings-page" (confidence: 0.5)
+8. Task complete → traces stored for the scheduled dream
 
 Afternoon:
-10. You: "Now add email notification when password changes"
-11. Claude queries strategies → finds the NEW "strat_3_settings-page"
-12. Claude also loads constraints → avoids a mistake from the morning session
-13. Builds on the morning's work with accumulated knowledge
-14. Another dream cycle → strategy updated to version 2, confidence: 0.55
+9. You open a parallel session: "Now add email notification when password changes"
+10. Claude queries strategies → same seeds, but also checks recent traces
+11. Builds on the morning's work
 
-Next week:
-15. Similar task on another project → "strat_3_settings-page" transfers over
-16. Confidence now 0.7 after multiple successes → Claude follows it closely
+Evening (9 PM — Scheduled Dream):
+12. DreamOS scheduled task fires automatically
+13. Dream Engine processes ALL traces from both sessions
+14. New strategy created: "strat_3_settings-page" (confidence: 0.5)
+15. New constraint: "always validate email format before sending notifications"
+16. Dream journal updated with summary
+
+Next day:
+17. Similar task on another project → "strat_3_settings-page" transfers over
+18. Next dream cycle → strategy updated to version 2, confidence: 0.55
 ```
 
 ---
@@ -641,7 +557,7 @@ llmunix-dreamos/
 │   └── marketplace.json              # Marketplace config (for distribution)
 ├── llmunix-plugin/                   # Plugin package
 │   ├── .claude-plugin/
-│   │   └── plugin.json               # Plugin manifest (v2.0.0)
+│   │   └── plugin.json               # Plugin manifest (v2.1.0)
 │   ├── agents/                       # Same 3 agents (plugin scope)
 │   │   ├── SystemAgent.md
 │   │   ├── MemoryAnalysisAgent.md

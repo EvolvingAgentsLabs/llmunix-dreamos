@@ -1,36 +1,28 @@
 # LLMunix DreamOS Plugin
 
-The kernel plugin for the LLMunix DreamOS cognitive operating system. Provides bio-inspired memory consolidation, hierarchical trace logging, and strategy-driven execution for Claude Code and Claude Cowork.
+The kernel plugin for the LLMunix DreamOS cognitive operating system. Provides bio-inspired memory consolidation, hierarchical trace logging, strategy-driven execution, and scheduled dream consolidation for Claude Code Desktop.
 
 ## Quick Start
 
-### Claude Code (Terminal)
+### Install via Claude Code Desktop
 
-The easiest way to install is to ask Claude Code directly in any conversation:
+1. Open **Claude Desktop** and switch to the **Code** tab
+2. Click the **+** button next to the prompt box and select **Plugins**
+3. Select **Add plugin** and search for `llmunix-dreamos`
+4. Install the plugin
+
+Or ask Claude directly in any Code session:
 
 ```
 Please install the llmunix-dreamos plugin from EvolvingAgentsLabs globally
 ```
 
-Or run the CLI commands yourself:
+### Set Up Scheduled Dream Consolidation
 
-```bash
-# Add the marketplace and install globally
-claude plugin marketplace add EvolvingAgentsLabs/llmunix-dreamos
-claude plugin install llmunix-plugin@llmunix-dreamos --scope user
-```
+After installing the plugin, set up automatic nightly dream consolidation:
 
-For development or one-off testing:
-
-```bash
-claude --plugin-dir /path/to/llmunix-dreamos/llmunix-plugin
-```
-
-### Claude Cowork (Desktop)
-
-1. Open Claude Desktop → Cowork tab
-2. Select a folder containing the DreamOS `system/` directory
-3. The plugin activates automatically when `CLAUDE.md` is detected
+1. Click **Schedule** in the sidebar, then **+ New task**
+2. Configure the task (see [Scheduled Dream Consolidation](../README.md#scheduled-dream-consolidation) in the main README)
 
 ## Components
 
@@ -69,7 +61,7 @@ User Goal → SystemAgent queries strategies → Decomposes hierarchically
 
 ## Version
 
-2.0.0 — DreamOS Edition
+2.1.0 — Claude Code Desktop Edition
 
 ## Author
 
