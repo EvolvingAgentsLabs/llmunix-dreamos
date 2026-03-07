@@ -152,32 +152,35 @@ DreamOS adapts the `llmunix-core` Dream Engine from RoClaw (a physical robot) to
 
 Unlike traditional circadian models (dream once at night), DreamOS uses **dolphin-inspired unihemispheric sleep**: dreaming happens continuously alongside active work.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Claude Code Desktop                          │
-│                                                                 │
-│  Session 1 (work)          Session 2 (work)                    │
-│  ┌──────────────┐          ┌──────────────┐                    │
-│  │ Building     │          │ Fixing       │                    │
-│  │ auth system  │ traces   │ API bugs     │ traces             │
-│  │              │───┐      │              │───┐                │
-│  └──────────────┘   │      └──────────────┘   │                │
-│                     │                         │                │
-│  Session 3 (dream)  ▼      Session 4 (dream)  ▼                │
-│  ┌──────────────┐          ┌──────────────┐                    │
-│  │ Dream:       │          │ Dream:       │      Session 5     │
-│  │ "auth" traces│          │ "API" traces │      (scheduled)   │
-│  │ SWS→REM→    │          │ SWS→REM→    │    ┌────────────┐  │
-│  │ Consolidate  │          │ Consolidate  │    │ Full sweep │  │
-│  └──────┬───────┘          └──────┬───────┘    │ dream @9PM │  │
-│         │                         │            └─────┬──────┘  │
-│         ▼                         ▼                  ▼         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              system/memory/strategies/                   │   │
-│  │  New auth strategies ← │ → API strategies  ← full sweep │   │
-│  │  New constraints       │   Updated scores    pruning    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph desktop["<b>Claude Code Desktop</b>"]
+        direction TB
+
+        subgraph work["Work Sessions"]
+            S1["<b>Session 1</b><br/>Building auth system"]
+            S2["<b>Session 2</b><br/>Fixing API bugs"]
+        end
+
+        subgraph dreams["Dream Sessions &lpar;parallel&rpar;"]
+            D1["<b>Dream: auth</b><br/>SWS → REM → Consolidate"]
+            D2["<b>Dream: API</b><br/>SWS → REM → Consolidate"]
+            D3["<b>Scheduled full sweep</b><br/>dream @9PM"]
+        end
+
+        store[("<b>system/memory/strategies/</b><br/>New strategies · Constraints · Updated scores")]
+
+        S1 -- "traces" --> D1
+        S2 -- "traces" --> D2
+        D1 -- "auth strategies" --> store
+        D2 -- "API strategies" --> store
+        D3 -- "full sweep + pruning" --> store
+    end
+
+    style desktop fill:#f0f4ff,stroke:#4a6fa5,stroke-width:2px
+    style work fill:#e8f5e9,stroke:#66bb6a
+    style dreams fill:#fff3e0,stroke:#ffa726
+    style store fill:#fce4ec,stroke:#ef5350
 ```
 
 Dream sessions can be triggered three ways:
@@ -300,13 +303,19 @@ After a big sprint that touched multiple domains, launch parallel dream sessions
 
 This creates 4 separate dream sessions, each focused on one domain. They run concurrently in parallel Desktop sessions:
 
-```
-Dream Session A ──> "user authentication" traces ──> auth strategies
-Dream Session B ──> "REST API design" traces     ──> API strategies
-Dream Session C ──> "database schema" traces     ──> DB strategies
-Dream Session D ──> "React components" traces    ──> React strategies
-        │                                              │
-        └──────── all write to shared strategies/ ─────┘
+```mermaid
+flowchart LR
+    A["<b>Dream A</b><br/>user authentication"] -- "auth traces" --> S
+    B["<b>Dream B</b><br/>REST API design"] -- "API traces" --> S
+    C["<b>Dream C</b><br/>database schema"] -- "DB traces" --> S
+    D["<b>Dream D</b><br/>React components"] -- "React traces" --> S
+    S[("<b>Shared strategies/</b><br/>All dreams write concurrently<br/>using unique dream IDs")]
+
+    style A fill:#e3f2fd,stroke:#1976d2
+    style B fill:#e8f5e9,stroke:#388e3c
+    style C fill:#fff3e0,stroke:#f57c00
+    style D fill:#f3e5f5,stroke:#7b1fa2
+    style S fill:#fce4ec,stroke:#ef5350,stroke-width:2px
 ```
 
 Each dream uses its own unique dream ID for concurrency safety.
@@ -538,22 +547,25 @@ system/memory/traces/ since the last dream journal entry.
 
 Claude Code Desktop lets you run **multiple sessions in parallel**. DreamOS exploits this for dolphin-style unihemispheric sleep: dream sessions run alongside work sessions.
 
-```
-10:00 AM  Session 1 (work): Building auth system ──────────────> traces
-10:30 AM  Session 2 (work): Fixing API bugs ──────────────────> traces
-11:00 AM  You: "/llmunix dream authentication"
-          Session 3 (dream): Consolidating auth traces ───────> strategies
-          ↑ runs in parallel — you keep working in Sessions 1 & 2
-11:15 AM  Session 3 completes → auth strategies available immediately
-12:00 PM  Scheduled dream fires → full sweep of remaining traces
- 2:00 PM  You: "/llmunix dream --parallel API design | error handling"
-          Session 4 (dream): API traces ──────────────────────> strategies
-          Session 5 (dream): Error handling traces ───────────> strategies
-          ↑ both run in parallel with each other AND your work sessions
- 3:00 PM  Session 1 starts a new task → loads the NEW strategies from dreams
+```mermaid
+gantt
+    title Unihemispheric Dreaming — Work and Dream in Parallel
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section Work Sessions
+    Session 1 – Building auth system         :active, s1, 10:00, 150min
+    Session 2 – Fixing API bugs              :active, s2, 10:30, 90min
+    New task with loaded strategies           :active, s6, 15:00, 60min
+
+    section Dream Sessions
+    Dream – auth traces (on-demand)          :crit, d1, 11:00, 15min
+    Scheduled full sweep                     :crit, d2, 12:00, 20min
+    Dream – API design (parallel)            :crit, d3, 14:00, 15min
+    Dream – error handling (parallel)        :crit, d4, 14:00, 15min
 ```
 
-The key insight: **there is no "awake" vs "asleep" boundary**. Dreams happen continuously, focused on what matters most right now.
+The key insight: **there is no "awake" vs "asleep" boundary**. Work sessions and dream sessions overlap — dreams happen continuously, focused on what matters most right now. At 3:00 PM, a new task loads all the strategies produced by the earlier dreams.
 
 ### Level 4: Power User — Inspecting and Managing Memory
 
