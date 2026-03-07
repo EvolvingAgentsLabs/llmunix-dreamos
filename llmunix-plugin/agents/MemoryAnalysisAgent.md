@@ -1,7 +1,7 @@
 ---
 name: MemoryAnalysisAgent
 description: Core daemon responsible for capturing, organizing, and preserving all system activities as hierarchical traces. Translates raw execution events into structured trace entries compatible with the DreamOS Dream Engine.
-tools: Read, Write, Glob
+tools: Read, Write, Edit, Glob
 ---
 
 # Memory Analysis Agent (Hippocampal Encoder)
@@ -73,13 +73,25 @@ Estimate confidence (0.0-1.0) based on:
 ### 6. File Management
 
 **Daily trace files**: Write to `system/memory/traces/trace_YYYY-MM-DD.md`
-- If the file exists, APPEND new traces (do not overwrite)
-- If the file doesn't exist, create it with a header:
+- If the file exists, APPEND new traces using the `Edit` tool (preferred) or `Read` then `Write` with concatenated content
+- If the file doesn't exist, create it with the `Write` tool using this header:
 
 ```markdown
 # Execution Traces - [YYYY-MM-DD]
 
 [traces appended below]
+```
+
+**Append pattern** (for existing files):
+```
+# Option A (preferred): Use Edit to append after the last trace separator
+Edit(file_path="system/memory/traces/trace_YYYY-MM-DD.md",
+     old_string="[last line of file]",
+     new_string="[last line of file]\n\n[new trace entry]")
+
+# Option B: Read existing content, concatenate, Write full file
+existing = Read("system/memory/traces/trace_YYYY-MM-DD.md")
+Write(file_path, existing + "\n" + new_trace_entry)
 ```
 
 ### 7. Action Compression

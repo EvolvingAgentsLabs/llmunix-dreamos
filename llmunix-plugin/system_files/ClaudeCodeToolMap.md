@@ -26,10 +26,11 @@ Maps DreamOS cognitive operations to Claude Code's native tool inventory. Update
 | `Bash` | Run shell commands | L3-L4 |
 | `Task` | Delegate to sub-agents | L1-L2 |
 
-### LSP Operations
+### IDE Operations
 | Tool | Purpose | Trace Level |
 |------|---------|-------------|
-| `LSP` | Code intelligence (go-to-def, refs, hover) | L4 |
+| `mcp__ide__getDiagnostics` | Get language diagnostics (errors, warnings) from IDE | L4 |
+| `mcp__ide__executeCode` | Execute code in Jupyter kernel | L3-L4 |
 
 ## DreamOS Operation Mappings
 

@@ -17,6 +17,16 @@ Or ask Claude directly in any Code session:
 Please install the llmunix-dreamos plugin from EvolvingAgentsLabs globally
 ```
 
+### Recommended: Skip Permissions
+
+DreamOS orchestrates multiple agents, writes traces, and runs parallel dream cycles — all of which trigger frequent permission prompts. For a smooth experience, start Claude Code with the `--dangerously-skip-permissions` flag:
+
+```
+claude --dangerously-skip-permissions
+```
+
+This allows agents to read, write, and execute without manual approval at each step. Only use this in trusted project directories where you're comfortable with autonomous file operations.
+
 ### Start Dreaming
 
 DreamOS supports dolphin-inspired unihemispheric dreaming — dream sessions run in parallel with your work:
@@ -48,6 +58,9 @@ Or set up a scheduled dream task for automatic consolidation. See [Unihemispheri
 | `/llmunix dream [keywords]` | Goal-focused dream — only consolidate traces matching keywords |
 | `/llmunix dream --parallel [g1] \| [g2] \| [g3]` | Launch parallel dream sessions for multiple goals |
 | `/llmunix dream status` | Report memory state: strategies, constraints, unprocessed traces |
+| `/llmunix loop` | Generate `/loop` command for recurring full-sweep dreams |
+| `/llmunix loop [keywords]` | Generate `/loop` command for goal-focused recurring dreams |
+| `/llmunix loop stop` | Output instructions for stopping dream loops |
 
 ### System Files
 
@@ -63,13 +76,14 @@ Reference specifications used by the agents:
 ## How It Works
 
 ```
-User Goal → SystemAgent queries strategies → Decomposes hierarchically
-  → Executes with trace logging → DreamEngineAgent consolidates (in parallel)
+User Goal → SystemAgent queries strategies → Triad Decomposition (min 3 agents)
+  → Implementation + Quality + Integration agents execute with trace logging
+  → Per-agent dream cycles (min 3, in parallel) → DreamEngineAgent consolidates each
   → Strategies + constraints written to disk → Better next time
 
 Dreaming (runs alongside work):
   /llmunix dream [keywords] → Goal-focused dream in parallel session
-  Scheduled task → Full sweep on timer
+  /llmunix loop [interval]  → Generate /loop command for recurring dreams
   /llmunix dream --parallel → Multiple domains simultaneously
 ```
 

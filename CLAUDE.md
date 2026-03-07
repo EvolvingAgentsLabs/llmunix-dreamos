@@ -117,6 +117,41 @@ When running in **Claude Cowork** (background agents):
 - The **DreamEngineAgent** (Hippocampus) can run asynchronously in background to consolidate memory while you work
 - The **MemoryAnalysisAgent** handles real-time trace logging
 
+## Execution Modes
+
+### Default Multi-Agent Mode (Triad Decomposition)
+
+Every `/llmunix [goal]` invocation **always creates at least 3 agents** along these concern axes:
+
+| Agent Role | Responsibility |
+|---|---|
+| **Implementation Agent** | Core deliverable (code, config, schema) |
+| **Quality Agent** | Validation, testing, review, correctness |
+| **Integration Agent** | Environment, docs, deployment, git |
+
+For complex goals, additional agents are created beyond the minimum 3. After execution, **one dream cycle per agent** runs in parallel (minimum 3), each filtered by that agent's keywords.
+
+### Loop Mode (Recurring Dreams)
+
+`/llmunix loop` generates `/loop` commands for the user to copy-paste (the plugin cannot invoke `/loop` directly since it's a built-in CLI command):
+
+- `/llmunix loop` → outputs: `/loop 1h /llmunix dream`
+- `/llmunix loop [keywords]` → outputs: `/loop 1h /llmunix dream [keywords]`
+- `/llmunix loop [interval] [keywords]` → outputs: `/loop [interval] /llmunix dream [keywords]`
+- `/llmunix loop stop` → outputs cancellation instructions
+
+Loop commands are session-scoped (max 3 days) and stop when the session ends or Ctrl+C is pressed.
+
+## Reference Specifications
+
+Detailed specifications for system internals are in `llmunix-plugin/system_files/`:
+- **SmartMemory.md**: Memory hierarchy, retrieval algorithm, and context assembly
+- **MemoryTraceManager.md**: Trace schema, lifecycle, and hierarchy rules
+- **QueryMemoryTool.md**: Strategy scoring algorithm and query patterns
+- **ClaudeCodeToolMap.md**: Tool-to-operation mapping and workflow patterns
+
+Consult these when implementing complex memory operations or debugging the consolidation pipeline.
+
 ## Important Rules
 
 1. NEVER delete seed strategies in `_seeds/` - they are the bootstrap knowledge

@@ -83,7 +83,7 @@ When searching for strategies (adapted from RoClaw's composite scoring):
       where success_rate = success_count / (success_count + failure_count)
    c. Filter: composite >= 0.2
 3. Sort by composite score descending
-4. Return top 3 matches
+4. Return top 5 matches
 ```
 
 ## Context Assembly

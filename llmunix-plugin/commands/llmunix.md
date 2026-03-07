@@ -90,6 +90,71 @@ Read and summarize:
 3. `system/memory/strategies/level_*/` — strategy count per level
 4. `system/memory/traces/` — unprocessed trace count
 
+## LOOP COMMANDS
+
+If the user's goal starts with `loop`, this is a request to generate a `/loop` command for recurring dream consolidation. The plugin cannot invoke `/loop` directly (it's a built-in CLI command), so output the command for the user to copy-paste.
+
+### `/llmunix loop`
+
+Output a default recurring full-sweep dream command:
+
+```
+To start recurring dream consolidation, copy and run this command:
+
+/loop 1h /llmunix dream
+
+This will run a full-sweep dream every hour for up to 3 days (session-scoped).
+To stop: press Ctrl+C or close the session.
+```
+
+### `/llmunix loop [keywords]`
+
+Output a recurring goal-focused dream command:
+
+```
+/llmunix loop authentication
+```
+
+Output:
+```
+To start recurring goal-focused dreams, copy and run this command:
+
+/loop 1h /llmunix dream [keywords]
+
+This will dream about [keywords] every hour for up to 3 days (session-scoped).
+To stop: press Ctrl+C or close the session.
+```
+
+### `/llmunix loop [interval] [keywords]`
+
+Output a recurring dream with custom interval:
+
+```
+/llmunix loop 30m authentication
+```
+
+Output:
+```
+To start recurring goal-focused dreams, copy and run this command:
+
+/loop 30m /llmunix dream authentication
+
+This will dream about authentication every 30m for up to 3 days (session-scoped).
+To stop: press Ctrl+C or close the session.
+```
+
+### `/llmunix loop stop`
+
+Output cancellation instructions:
+
+```
+To stop a running dream loop:
+1. Press Ctrl+C in the session running the /loop command
+2. Or close the Claude Code session entirely
+
+Note: /loop is session-scoped and will automatically stop after 3 days or when the session ends.
+```
+
 ## EXECUTION WORKFLOW
 
 For non-dream goals, execute the standard cognitive pipeline:
@@ -103,17 +168,30 @@ Before planning, load the system's accumulated knowledge:
 3. Use `Grep` on `system/memory/strategies/level_*/` for keywords from the user's goal
 4. If matching strategies found (confidence >= 0.5), note them for the plan
 
-### Step 2: ANALYZE & PLAN (Hierarchical Decomposition)
+### Step 2: ANALYZE & PLAN (Triad Decomposition)
 
 1. Analyze the goal thoroughly
 2. Determine the root hierarchy level:
    - Full project → L1 GOAL
    - Architecture/design task → L2 ARCHITECTURE
    - Single feature/module → L3 TACTICAL
-   - Simple command → L4 REACTIVE (no orchestration needed)
-3. Decompose into sub-tasks at the next level down
+   - Simple command → L4 REACTIVE
+3. **Triad Decomposition**: Always decompose into **at minimum 3 sub-tasks** along these concern axes:
+
+   | Agent Role | Responsibility | Adapts To |
+   |---|---|---|
+   | **Implementation Agent** | Core deliverable (code, config, schema) | Main task domain |
+   | **Quality Agent** | Validation, testing, review, correctness | Testing framework |
+   | **Integration Agent** | Environment, docs, deployment, git | Project tooling |
+
+   For complex goals (L1/L2), create **additional agents beyond 3** as needed. The concern axes adapt to domain:
+   - DB tasks → Schema Agent, Migration Agent, Testing Agent
+   - API tasks → Endpoint Agent, Validation Agent, Documentation Agent
+   - UI tasks → Component Agent, Style Agent, Accessibility Agent
+
 4. For each sub-task, identify: required expertise, tools needed, dependencies
 5. Map matching strategies to sub-tasks
+6. Even for L4 REACTIVE goals, enforce the 3-agent minimum (e.g., Execute Agent, Verify Agent, Log Agent)
 
 ### Step 3: CREATE PROJECT STRUCTURE
 
@@ -127,9 +205,9 @@ projects/[ProjectName]/
     └── long_term/       # Project-consolidated learnings
 ```
 
-### Step 4: CREATE SPECIALIZED AGENTS
+### Step 4: CREATE SPECIALIZED AGENTS (Minimum 3)
 
-For each sub-task requiring specialized expertise:
+For each sub-task (always at least 3 from Triad Decomposition):
 
 1. Design an agent with YAML frontmatter + detailed system prompt
 2. Write to `projects/[ProjectName]/components/agents/[AgentName].md`
@@ -157,27 +235,25 @@ For each sub-task in dependency order:
 2. Provide a clear summary of what was produced
 3. List all files created/modified
 
-### Step 7: CONSOLIDATE & LEARN (Dream Cycle)
+### Step 7: CONSOLIDATE & LEARN (Per-Agent Dream Cycles)
 
-After execution completes, decide the dream approach:
+After execution completes, run **one dream cycle per agent that executed** (minimum 3). All dreams launch in parallel:
 
-- **For simple tasks (L3/L4)**: Run an immediate goal-focused dream on the task's traces
-  ```
-  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Keywords: [task keywords]. Process traces in system/memory/traces/.")
-  ```
+```
+# One DreamEngineAgent per agent — all launched in parallel
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Keywords: [ImplementationAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Keywords: [QualityAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream consolidation. Keywords: [IntegrationAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+# ... additional dreams for any agents beyond the minimum 3
+```
 
-- **For complex tasks (L1/L2)**: Run parallel goal-focused dreams — one per major sub-goal
-  ```
-  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [sub-goal-1 keywords]. ...")
-  Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [sub-goal-2 keywords]. ...")
-  ```
-
-- **If the user is still working**: Skip dreaming and let the scheduled task or the user's next `/llmunix dream` handle it
+Each dream is filtered by the agent's name and the goal keywords, ensuring focused consolidation per concern axis.
 
 Report consolidation results:
-   - New strategies learned
-   - New constraints identified
-   - Strategies updated
+   - Agents dreamed: [count]
+   - Per-agent dream results (new strategies, constraints, updates)
+   - Total new strategies learned
+   - Total new constraints identified
 
 ### Step 8: REPORT TO USER
 
@@ -195,10 +271,15 @@ Provide a structured summary:
 - [file2]: [description]
 
 ### Dream Consolidation
-- Mode: [full-sweep / goal-focused / parallel / deferred]
-- New strategies: [count]
-- Updated strategies: [count]
-- New constraints: [count]
+- Mode: per-agent parallel dreams
+- Agents dreamed: [count] (minimum 3)
+- Per-agent results:
+  - [AgentName]: [new strategies / updated strategies / new constraints]
+  - [AgentName]: [new strategies / updated strategies / new constraints]
+  - [AgentName]: [new strategies / updated strategies / new constraints]
+- Total new strategies: [count]
+- Total updated strategies: [count]
+- Total new constraints: [count]
 
 ### Learnings
 [2-3 sentences summarizing what the system learned from this execution]
@@ -250,3 +331,6 @@ Log your execution as L3/L4 traces in `system/memory/traces/trace_YYYY-MM-DD.md`
 7. **ALWAYS link traces hierarchically** — parent-child relationships are essential for dream analysis
 8. **PREFER goal-focused dreams** for targeted learning after specific tasks
 9. **USE parallel dreams** when a complex task spans multiple domains
+10. **ALWAYS create at least 3 agents** — Triad Decomposition (Implementation, Quality, Integration) is the minimum for every goal
+11. **ALWAYS run at least 3 dream cycles** — one per agent that executed, all in parallel
+12. **NEVER invoke `/loop` directly** — the plugin outputs `/loop` commands for the user to copy-paste

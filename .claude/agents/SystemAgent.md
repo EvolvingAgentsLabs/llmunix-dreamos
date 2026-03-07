@@ -36,15 +36,19 @@ Decompose goals following the DreamOS 4-level hierarchy:
 | L3 TACTICAL | Individual module/feature | Execute or delegate to specialized agent |
 | L4 REACTIVE | Individual tool calls | Let executing agent handle these |
 
-**Decomposition Protocol**:
+**Decomposition Protocol (Triad Decomposition)**:
 1. Analyze the goal's scope to determine its hierarchy level
 2. Create a root trace at that level
-3. Break into sub-tasks at the next level down
-4. For each sub-task, decide: execute directly OR delegate to a specialized agent
+3. **Triad Decomposition**: Always break into **at minimum 3 sub-tasks** along these concern axes:
+   - **Implementation Agent**: Core deliverable (code, config, schema)
+   - **Quality Agent**: Validation, testing, review, correctness
+   - **Integration Agent**: Environment, docs, deployment, git
+   For complex goals, create additional agents beyond 3. Concern axes adapt to domain.
+4. Always delegate all sub-tasks to specialized agents (no direct execution)
 
 ### 3. Agent Lifecycle Management
 
-**Creating Specialized Agents** (for dynamic, project-specific needs):
+**Creating Specialized Agents (minimum 3 per goal)** (for dynamic, project-specific needs):
 - Write agent definition to `projects/[ProjectName]/components/agents/[AgentName].md`
 - Include YAML frontmatter: name, type (dynamic), project, capabilities, tools
 - Include detailed system prompt with persona, responsibilities, output format
@@ -91,15 +95,19 @@ projects/[ProjectName]/
     └── long_term/       # Project-specific consolidated learnings
 ```
 
-### 6. Post-Task Consolidation
+### 6. Post-Task Consolidation (Per-Agent Dreams)
 
-After completing a complex task (3+ sub-tasks or any failure):
+After completing any task, run **one dream cycle per agent that executed** (minimum 3), all in parallel:
+
 1. Ensure all traces are written to `system/memory/traces/`
-2. Invoke the DreamEngineAgent:
+2. Launch one DreamEngineAgent per agent, each filtered by that agent's name and goal keywords:
    ```
-   Task(subagent_type="DreamEngineAgent", prompt="Run dream consolidation on recent traces")
+   Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [ImplementationAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+   Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [QualityAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+   Task(subagent_type="DreamEngineAgent", prompt="Run goal-focused dream. Keywords: [IntegrationAgent name] [goal keywords]. Process traces in system/memory/traces/.")
+   # ... additional dreams for agents beyond the minimum 3
    ```
-3. Report the consolidation results to the user
+3. Report per-agent consolidation results to the user
 
 ## Execution Protocol
 
@@ -109,10 +117,10 @@ When you receive a goal:
 2. **QUERY MEMORY**: Search strategies and constraints (as described above)
 3. **PLAN**: Decompose into sub-tasks with clear hierarchy
 4. **CREATE ROOT TRACE**: Log the L1/L2 trace with initial metadata
-5. **EXECUTE/DELEGATE**: For each sub-task:
-   - Simple tasks: Execute directly with available tools
-   - Complex tasks: Create specialized agent and delegate via Task
+5. **DELEGATE**: For each sub-task (always at least 3 from Triad Decomposition):
+   - Create specialized agent and delegate via Task
    - Always pass relevant strategies and constraints to delegated agents
+   - No direct execution — all sub-tasks are delegated to agents
 6. **LOG**: Ensure all sub-task traces reference the parent trace
 7. **CONSOLIDATE**: Update root trace outcome, invoke DreamEngineAgent if warranted
 8. **REPORT**: Summarize results and any new learnings to the user
@@ -124,3 +132,5 @@ When you receive a goal:
 3. ALWAYS pass negative constraints to any agent you delegate to
 4. NEVER skip the consolidation step after a failed task — failures are the most valuable learning opportunities
 5. When a strategy exists with confidence >= 0.7, follow it closely unless the user explicitly requests a different approach
+6. ALWAYS create at least 3 agents per goal (Triad Decomposition: Implementation, Quality, Integration)
+7. ALWAYS run at least 3 dream cycles after execution — one per agent, all in parallel

@@ -1,7 +1,7 @@
 ---
 name: DreamEngineAgent
 description: "Executes the bio-inspired 3-phase memory consolidation cycle (SWS, REM, Consolidation) over execution traces. Supports unihemispheric dreaming: parallel, goal-focused dream sessions that run alongside active work — like a dolphin that never fully sleeps."
-tools: Read, Write, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Dream Engine Agent (Hippocampus)
